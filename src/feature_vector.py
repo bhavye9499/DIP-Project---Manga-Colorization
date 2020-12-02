@@ -33,5 +33,5 @@ def feature_vector_user(raw_img, scribbled_img, img_pattern_features, filter_ban
                 feature_vector = feature_vector_at_pixel((x, y), img_pattern_features, filter_bank)
                 feature_vectors.append(feature_vector)
     # visualize_feature_vectors(feature_vectors)
-    feature_vector_user = np.mean(feature_vectors, axis=0)  # TODO find feature_vector_user using clustering methods
+    feature_vector_user = np.mean(get_major_cluster(feature_vectors, eps=0.05), axis=0)
     return feature_vector_user

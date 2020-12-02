@@ -6,10 +6,12 @@ from src.pattern_feature import *
 from src.visualizer import *
 
 if __name__ == '__main__':
-    raw_img = cv2.cvtColor(cv2.imread(path.join(RAW_INPUT_FOLDER, 'tree.jpg')), cv2.COLOR_BGR2GRAY)
-    scribbled_img = cv2.imread(path.join(SCRIBBLED_INPUT_FOLDER, 'tree.jpg'))
+    raw_img = cv2.cvtColor(cv2.imread(path.join(RAW_INPUT_FOLDER, 'test2.jpg')), cv2.COLOR_BGR2GRAY)
+    scribbled_img = cv2.imread(path.join(SCRIBBLED_INPUT_FOLDER, 'test2.jpg'))
+    # visualize_image(raw_img)
+    # visualize_image(scribbled_img, mode='RGB')
 
-    filter_bank = generate_filter_bank(4, 6, 5, 5)
+    filter_bank = generate_filter_bank(4, 6, 3, 3)
     # visualize_filter_bank(filter_bank, 4, 6)
 
     pattern_features = pattern_features_of_image(raw_img, filter_bank)

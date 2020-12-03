@@ -1,5 +1,4 @@
 from sklearn.cluster import DBSCAN
-from sklearn.mixture import GaussianMixture
 
 from src.visualizer import *
 
@@ -20,7 +19,8 @@ def get_major_cluster(feature_vectors, eps=1, min_samples=20):
     clusters, cluster_counts = np.unique(yhat, return_counts=True)
     print(f'clusters = {list(zip(clusters, cluster_counts))}')
     visualize_clustered_feature_vectors(feature_vectors, yhat)
-    M_cluster = clusters[np.where(cluster_counts == max(cluster_counts[1:]))[0][0]]
+    M_cluster_counts = max(cluster_counts[1:] if clusters[0] == -1 else cluster_counts)
+    M_cluster = clusters[np.where(cluster_counts == M_cluster_counts)[0][0]]
     row_ix = np.where(yhat == M_cluster)
     major_cluster = np.asarray(feature_vectors)[row_ix]
     return major_cluster

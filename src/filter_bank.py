@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import math
 
+from skimage.filters import gabor_kernel
+
 
 def generate_filter_bank(M, N, p, q, fmax=0.25, gama=math.sqrt(2), eta=math.sqrt(2)):
     """
@@ -44,4 +46,19 @@ def generate_filter_bank_using_opencv(M, N, p, q, sigma=np.pi, gamma=0.5, phi=0)
             lamda = (m + 1) * np.pi
             kernel = cv2.getGaborKernel((p, q), sigma, theta, lamda, gamma, phi, ktype=cv2.CV_32F)
             filter_bank.append(kernel)
+    return filter_bank
+
+
+def generate_filter_bank_using_skimage(N, sigmas=(1, 3), freqs=(0.5, 0.25)):
+    """
+    N	:	No. of orientations (usually set to 8)
+    Create gabor filter bank using gabor_kernel method in skimage package
+    """
+    filter_bank = []
+    for n in range(N):
+        theta = (n * np.pi) / N
+        for sigma in sigmas:
+            for freq in freqs:
+                kernel = np.real(gabor_kernel(freq, theta=theta, sigma_x=sigma, sigma_y=sigma))
+                filter_bank.append(kernel)
     return filter_bank

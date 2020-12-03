@@ -1,5 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from skimage.color import label2rgb
+from sklearn.cluster import KMeans
 from sklearn.decomposition import TruncatedSVD
 from PIL import Image
 
@@ -25,6 +27,17 @@ def visualize_feature_vectors(feature_vectors):
     model = TruncatedSVD(n_components=2)
     yhat = model.fit_transform(feature_vectors)
     plt.scatter(yhat[:, 0], yhat[:, 1])
+    plt.show()
+
+
+def visualize_feature_vector_set_of_image(img_feature_vector_set, n_clusters, cmap=None):
+    P, Q, R = img_feature_vector_set.shape
+    model = KMeans(n_clusters=n_clusters, max_iter=10)
+    X = np.reshape(img_feature_vector_set, (P * Q, R))
+    yhat = model.fit_predict(X)
+    L = label2rgb(yhat)
+    output = np.reshape(L, (P, Q, 3))
+    plt.imshow(output, cmap=cmap)
     plt.show()
 
 

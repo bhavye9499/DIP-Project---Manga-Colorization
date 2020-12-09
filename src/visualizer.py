@@ -54,3 +54,11 @@ def visualize_filter_bank(filter_bank, m, n):
 
 def visualize_image(img_arr, mode=None):
     Image.fromarray(img_arr, mode=mode).show()
+
+
+def visualize_scribbled_pixels(img, scribbled_pixels):
+    output = img
+    for x, y in scribbled_pixels:
+        output[x, y] = 0
+    plt.imshow(output, cmap='gray')
+    plt.show()

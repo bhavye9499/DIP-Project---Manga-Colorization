@@ -1,6 +1,5 @@
-from sklearn.cluster import DBSCAN
-
 from src.visualizer import *
+from src.generic_imports import *
 
 
 def get_pixel_neighbourhood(mat, location, shape):
@@ -24,3 +23,33 @@ def get_major_cluster(feature_vectors, eps=1, min_samples=20):
     row_ix = np.where(yhat == M_cluster)
     major_cluster = np.asarray(feature_vectors)[row_ix]
     return major_cluster
+
+
+def get_scribbled_pixels(scribbled_img, delta=10):
+    P, Q = scribbled_img.shape[:2]
+    scribbled_pixels = []
+    for x in range(P):
+        for y in range(Q):
+            pixel = scribbled_img[x, y]
+            if max(pixel) - min(pixel) > delta:
+                scribbled_pixels.append((x, y))
+    return scribbled_pixels
+
+
+def grad2d(f):
+    return np.gradient(f)
+
+
+def log_transform(f):
+    c = 255 / math.log(1 + np.max(f))
+    return c * np.log(1 + f)
+
+
+def mag_grad2d(fx, fy):
+    mag_grad_f = np.sqrt(np.square(fx) + np.square(fy))
+    return mag_grad_f
+
+
+def normalize_and_scale(f):
+    f_new = f - np.min(f)
+    return (f_new / np.max(f_new)) * 255

@@ -16,19 +16,16 @@ def feature_vector_set_of_image(shape, pattern_features, filter_bank_length, win
     return img_feature_vector_set
 
 
-def feature_vector_user(raw_img, scribbled_img, img_feature_vector_set, delta=5):
+def feature_vector_user(scribbled_img, img_feature_vector_set, delta=5):
     """
     Return a pattern feature vector for a scribble.
     The feature vector contains 2 * len(filter_bank) values.
     Mean and Standard deviation for each filter in filter bank.
     """
-    P, Q = raw_img.shape
+    scribbled_pixels = get_scribbled_pixels(scribbled_img, delta)
     feature_vectors = []
-    for x in range(P):
-        for y in range(Q):
-            pixel = scribbled_img[x, y]
-            if max(pixel) - min(pixel) > delta:
-                feature_vectors.append(img_feature_vector_set[x, y])
+    for (x, y) in scribbled_pixels:
+        feature_vectors.append(img_feature_vector_set[x, y])
     visualize_feature_vectors(feature_vectors)
     feature_vector_user = np.average(get_major_cluster(feature_vectors, eps=15, min_samples=10), axis=0)
     return feature_vector_user

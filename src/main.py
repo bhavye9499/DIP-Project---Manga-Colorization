@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     # phi = get_initial_phi(scribbled_img)
     # hI = get_halting_filter_intensity(raw_img)
-    phi = perform_LSM(raw_img, scribbled_img, 1, 500, leak_proofing=False)
+    phi = perform_LSM(raw_img, scribbled_img, 0.1, leak_proofing=True)
 
     # filter_bank_size = orientations * len(sigmas) * len(freqs)
     # filter_bank = generate_filter_bank(4, 6, 3, 3)

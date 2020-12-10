@@ -1,5 +1,4 @@
 from src.constants import *
-from src.generic_imports import *
 from src.halting_filter import *
 from src.utils import *
 
@@ -50,32 +49,18 @@ def get_phi_0(shape, center, radius):
     return phi_0
 
 
-def perform_LSM(img, scribbled_img, dt, type='intensity', leak_proofing=True):
-    np.seterr(divide='ignore', invalid='ignore')
-    plt.figure(figsize=(7, 7))
+def perform_LSM(image, scribbled_img, dt, max_iter=10000, lsm_type='intensity', leak_proofing=False):
+    P, Q = image.shape
 
-    scribbled_pixels = get_scribbled_pixels(scribbled_img)
-    # visualize_scribbled_pixels(np.copy(img), scribbled_pixels)
-    rand_pixel = scribbled_pixels[np.random.randint(0, len(scribbled_pixels), 1)[0]][:: -1]
+    start_pixel = random.choice(get_scribbled_pixels(scribbled_img))
 
-    P, Q = img.shape
-    x = np.linspace(0, P, P)
-    y = np.linspace(0, Q, Q)
+    y = np.linspace(0, P, P)
+    x = np.linspace(0, Q, Q)
     dot_pitch = x[1] - x[0]
     X, Y = np.meshgrid(x, y)
-    phi = (X - rand_pixel[0]) ** 2 + (Y - rand_pixel[1]) ** 2 - (dot_pitch ** 2)
-    # phi = get_phi_0(img.shape, rand_pixel, 1)
-    print(f'phi shape = {phi.shape}')
-    # plt.contour(x, y, phi, [0])
-    # plt.show()
-    # exit(-1)
+    phi = (X - start_pixel[0]) ** 2 + (Y - start_pixel[1]) ** 2 - (dot_pitch ** 2)
 
-    h = None
-    if type == 'intensity':
-        h = get_halting_filter_intensity(img)
-    elif type == 'pattern':
-        h = get_halting_filter_pattern(img)
-    # Image.fromarray(log_transform(h)).show()
+    h = halting_filter(image, lsm_type)
 
     # For intensity-continuous propagation only
     FI = 0
@@ -86,28 +71,26 @@ def perform_LSM(img, scribbled_img, dt, type='intensity', leak_proofing=True):
         FI = -FA * np.clip((temp - M2) / (M1 - M2 - RELAX_FACTOR), 0, 1)
 
     prev_omega = np.sum(phi <= 0)
-    itr = 0
-    # TODO fast marching method for complexity O(n.logn)
-    while True:
+
+    for itr in range(max_iter):
         FG = -EPSILON * curvature(phi, dot_pitch)
         F = h * (FA + FG)
         if leak_proofing:
             F += h * FI
 
-        # phi = phi - (dt * F * |grad|)
         phi = phi - (dt * f_abs_grad_phi(phi, dot_pitch, F))
 
         for _ in range(NR):
             phi = phi - (dt * f_abs_grad_phi(phi, dot_pitch, phi / np.sqrt(phi ** 2 + (2 * dot_pitch) ** 2), 1))
 
         if (itr + 1) % JUMP == 0:
-            plt.contour(x, y, phi, [0])
+            plt.imshow(image, cmap='gray')
+            plt.contour(phi, colors='red', levels=0, linewidths=2)
             plt.show(block=False)
             plt.pause(1e-4)
             plt.clf()
 
             cur_omega = np.sum(phi <= 0)
-            # print(cur_omega - prev_omega)
             if cur_omega - prev_omega < LSM_THRESHOLD:
                 break
             prev_omega = cur_omega
@@ -115,5 +98,6 @@ def perform_LSM(img, scribbled_img, dt, type='intensity', leak_proofing=True):
         itr += 1
 
     print('Segmentation Completed')
-    plt.contour(x, y, phi, [0])
+    plt.imshow(image, cmap='gray')
+    plt.contour(phi, colors='red', levels=0, linewidths=2)
     plt.show()

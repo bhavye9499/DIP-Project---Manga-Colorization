@@ -19,7 +19,7 @@ def curvature(phi, dot_pitch):
 
     kappa = (phi_xx * phi_y ** 2 - 2 * phi_x * phi_y * phi_xy + phi_yy * phi_x ** 2) / (phi_x ** 2 + phi_y ** 2) ** 1.5
 
-    return np.minimum(np.maximum(kappa, -1 / dot_pitch), 1 / dot_pitch)
+    return np.nan_to_num(np.minimum(np.maximum(kappa, -1 / dot_pitch), 1 / dot_pitch))
 
 
 def f_abs_grad_phi(phi, dot_pitch, f, c=0):
@@ -37,30 +37,25 @@ def f_abs_grad_phi(phi, dot_pitch, f, c=0):
     grad_minus = np.sqrt(np.minimum(Dx_minus, 0) ** 2 + np.maximum(Dx_plus, 0) ** 2 +
                          np.minimum(Dy_minus, 0) ** 2 + np.maximum(Dy_plus, 0) ** 2)
 
-    return (np.maximum(f, 0) * (grad_plus - c)) + (np.minimum(f, 0) * (grad_minus - c))
+    return np.nan_to_num((np.maximum(f, 0) * (grad_plus - c)) + (np.minimum(f, 0) * (grad_minus - c)))
 
 
 def get_phi_0(shape, center, radius):
     P, Q = shape
-    phi_0 = np.zeros(shape, dtype=np.float_)
-    for i in range(P):
-        for j in range(Q):
-            phi_0[i, j] = (i - center[0]) ** 2 + (j - center[1]) ** 2 - radius ** 2
+    y = np.linspace(0, P - 1, P)
+    x = np.linspace(0, Q - 1, Q)
+    X, Y = np.meshgrid(x, y)
+    phi_0 = (X - center[0]) ** 2 + (Y - center[1]) ** 2 - (radius ** 2)
     return phi_0
 
 
-def perform_LSM(image, scribbled_img, dt, max_iter=10000, lsm_type='intensity', leak_proofing=False):
-    P, Q = image.shape
-
+def perform_LSM(img, scribbled_img, dt, max_iter=10000, lsm_type='intensity', leak_proofing=False):
     start_pixel = random.choice(get_scribbled_pixels(scribbled_img))
 
-    y = np.linspace(0, P, P)
-    x = np.linspace(0, Q, Q)
-    dot_pitch = x[1] - x[0]
-    X, Y = np.meshgrid(x, y)
-    phi = (X - start_pixel[0]) ** 2 + (Y - start_pixel[1]) ** 2 - (dot_pitch ** 2)
+    dot_pitch = 1
+    phi = get_phi_0(img.shape, start_pixel, dot_pitch)
 
-    h = halting_filter(image, lsm_type)
+    h = halting_filter(img, lsm_type)
 
     # For intensity-continuous propagation only
     FI = 0
@@ -84,7 +79,7 @@ def perform_LSM(image, scribbled_img, dt, max_iter=10000, lsm_type='intensity', 
             phi = phi - (dt * f_abs_grad_phi(phi, dot_pitch, phi / np.sqrt(phi ** 2 + (2 * dot_pitch) ** 2), 1))
 
         if (itr + 1) % JUMP == 0:
-            plt.imshow(image, cmap='gray')
+            plt.imshow(img, cmap='gray')
             plt.contour(phi, colors='red', levels=0, linewidths=2)
             plt.show(block=False)
             plt.pause(1e-4)
@@ -98,6 +93,6 @@ def perform_LSM(image, scribbled_img, dt, max_iter=10000, lsm_type='intensity', 
         itr += 1
 
     print('Segmentation Completed')
-    plt.imshow(image, cmap='gray')
+    plt.imshow(img, cmap='gray')
     plt.contour(phi, colors='red', levels=0, linewidths=2)
     plt.show()

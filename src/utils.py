@@ -27,14 +27,12 @@ def get_major_cluster(feature_vectors, eps=1, min_samples=20):
 
 def get_scribbled_pixels(scribbled_img, delta=10):
     P, Q, _ = scribbled_img.shape
-
     scribbled_pixels = []
     for y in range(P):
         for x in range(Q):
             pixel = scribbled_img[y, x]
             if max(pixel) - min(pixel) > delta:
                 scribbled_pixels.append((x, y))
-
     return scribbled_pixels
 
 

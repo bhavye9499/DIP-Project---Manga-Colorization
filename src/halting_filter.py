@@ -12,8 +12,8 @@ def halting_filter(raw_img, scribbled_img, region):
         raise ValueError(f'Invalid region {region}! Valid lsm_type are {[e for e in Region]}')
 
 
-def halting_filter_intensity(img, sigma=1):
-    gaussian_smoothed_img = ndi.gaussian_filter(img, sigma)
+def halting_filter_intensity(img):
+    gaussian_smoothed_img = ndi.gaussian_filter(img, SIGMA)
     mag_grad_img = mag_grad2d(*np.gradient(gaussian_smoothed_img))
     hI = 1 / (1 + mag_grad_img ** 2)
     return hI

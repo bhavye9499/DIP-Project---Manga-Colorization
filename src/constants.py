@@ -1,4 +1,4 @@
-from src.generic_imports import *
+from src.imports import *
 
 
 THIS_FOLDER = path.dirname(path.abspath(__file__))

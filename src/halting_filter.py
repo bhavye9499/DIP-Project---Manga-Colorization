@@ -63,8 +63,8 @@ def feature_vector_user(scribbled_img, img_feature_vector_set, delta=5):
         feature_vectors.append(img_feature_vector_set[x, y])
     # major_cluster = get_major_cluster(feature_vectors, eps=15, min_samples=10)
     major_cluster = feature_vectors
-    feature_vector_user = np.average(major_cluster, axis=0)
-    return feature_vector_user
+    fv_user = np.average(major_cluster, axis=0)
+    return fv_user
 
 
 def pattern_features_of_image_using_skimage(img, N, sigmas, freqs, mode='reflect', cval=0):

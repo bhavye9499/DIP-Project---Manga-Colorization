@@ -1,5 +1,5 @@
 from src.visualizer import *
-from src.generic_imports import *
+from src.imports import *
 
 
 def get_pixel_neighbourhood(mat, location, shape):

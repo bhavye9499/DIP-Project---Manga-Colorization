@@ -90,7 +90,6 @@ def perform_LSM(raw_img, scribbled_img, dt, max_iter=10000, region=Region.intens
                 break
             prev_omega = cur_omega
 
-    print('Segmentation Completed')
-    plt.imshow(raw_img, cmap='gray')
-    plt.contour(phi, colors='red', levels=0, linewidths=2)
-    plt.show()
+    print('LSM Completed')
+
+    return phi

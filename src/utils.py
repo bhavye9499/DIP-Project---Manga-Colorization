@@ -50,6 +50,19 @@ def mag_grad2d(fx, fy):
     return mag_grad_f
 
 
+def map_mat(mat, mn=0, mx=1):
+    """
+    Map the range of matrix to mn-mx.
+    :param mat: matrix
+    :param mn: min
+    :param mx: max
+    :return: mapped matrix
+    """
+    mat_mn = mat.min()
+    mat_mx = mat.max()
+    return mn + ((mat - mat_mn) / (mat_mx - mat_mn)) * (mx - mn)
+
+
 def normalize_and_scale(f):
     f_new = f - np.min(f)
     return (f_new / np.max(f_new)) * 255

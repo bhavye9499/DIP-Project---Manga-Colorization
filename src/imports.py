@@ -9,9 +9,8 @@ from matplotlib import pyplot as plt
 from os import path, pardir
 from PIL import Image
 from scipy import ndimage as ndi
-from skimage.color import label2rgb
+from skimage import color
 from skimage.filters import gabor
-from sklearn.cluster import KMeans
-from sklearn.cluster import DBSCAN
+from sklearn.cluster import DBSCAN, KMeans
 from sklearn.decomposition import TruncatedSVD
 from tqdm import tqdm

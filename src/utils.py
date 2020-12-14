@@ -2,6 +2,16 @@ from src.visualizer import *
 from src.imports import *
 
 
+def get_frequencies(shape):
+    numRows = shape[0]
+    numCols = shape[1]
+    wavelengthMin = 4 / np.sqrt(2)
+    wavelengthMax = np.hypot(numRows, numCols)
+    n = np.floor(np.log2(wavelengthMax / wavelengthMin))
+    wavelength = np.power(2, np.arange(0, n - 1, 1)) * wavelengthMin
+    return 1 / wavelength
+
+
 def get_pixel_neighbourhood(mat, location, shape):
     x, y = location
     P, Q = shape

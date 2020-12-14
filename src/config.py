@@ -1,7 +1,6 @@
 # config for getting halting filter for pattern-continuous region
 ORIENTATIONS = 6
 SIGMAS = (1, 3)
-FREQS = (0.05, 0.25)
 WINDOW_SIZE = 7
 
 # config for getting halting filter for intensity-continuous region

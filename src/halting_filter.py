@@ -40,7 +40,7 @@ def feature_dist(fv1, fv2):
     return np.dot(diff, diff)
 
 
-def feature_vector_set_of_image(shape, pattern_features, filter_bank_length, window_size=15, mode='reflect', cval=0):
+def feature_vector_set_of_image(shape, pattern_features, filter_bank_length, window_size=15):
     """
     Returns pattern feature vector set of the image.
     The feature vector contains 2 * len(filter_bank) values.
@@ -49,8 +49,8 @@ def feature_vector_set_of_image(shape, pattern_features, filter_bank_length, win
     P, Q = shape
     img_feature_vector_set = np.zeros((P, Q, 2 * filter_bank_length), dtype=np.float_)
     for i in tqdm(range(len(pattern_features))):
-        pattern_feature_mean = ndi.generic_filter(pattern_features[i], np.mean, size=window_size, mode=mode, cval=cval)
-        pattern_feature_std = ndi.generic_filter(pattern_features[i], np.std, size=window_size, mode=mode, cval=cval)
+        pattern_feature_mean = ndi.generic_filter(np.real(pattern_features[i]), np.mean, size=window_size)
+        pattern_feature_std = ndi.generic_filter(np.real(pattern_features[i]), np.std, size=window_size)
         img_feature_vector_set[:, :, 2 * i] = pattern_feature_mean
         img_feature_vector_set[:, :, 2 * i + 1] = pattern_feature_std
     return img_feature_vector_set
@@ -73,8 +73,9 @@ def pattern_features_of_image_using_skimage(img, N, sigmas, freqs, mode='reflect
         theta = (n * np.pi) / N
         for sigma in sigmas:
             for freq in freqs:
-                filtered_real, _ = gabor(img, freq, theta=theta, sigma_x=sigma, sigma_y=sigma, mode=mode, cval=cval)
-                pattern_features.append(filtered_real)
+                filtered_real, filtered_img = gabor(img, freq, theta=theta, sigma_x=sigma, sigma_y=sigma, mode=mode,
+                                                    cval=cval)
+                pattern_features.append(filtered_real + np.complex(0, 1) * filtered_img)
     return pattern_features
 
 
@@ -82,11 +83,10 @@ def pattern_features_of_image_using_skimage(img, N, sigmas, freqs, mode='reflect
 
 
 def halting_filter_pattern(raw_img, scribbled_img):
-    filter_bank_size = ORIENTATIONS * len(SIGMAS) * len(FREQS)
-    pattern_features = pattern_features_of_image_using_skimage(raw_img, ORIENTATIONS, SIGMAS, FREQS, mode='reflect')
+    freqs = get_frequencies(raw_img.shape)
+    filter_bank_size = ORIENTATIONS * len(SIGMAS) * len(freqs)
+    pattern_features = pattern_features_of_image_using_skimage(raw_img, ORIENTATIONS, SIGMAS, freqs, mode='reflect')
     fvs_img = feature_vector_set_of_image(raw_img.shape, pattern_features, filter_bank_size, window_size=WINDOW_SIZE)
-    # pickle.dump(fvs_img, open('fvs_img_tree2', 'wb'))
-    # fvs_img = pickle.load(open('fvs_img_tree2', 'rb'))
     fv_user = feature_vector_user(scribbled_img, fvs_img)
     d_map = distance_map(raw_img.shape, fvs_img, fv_user)
     hP = 1 / (1 + np.abs(d_map))

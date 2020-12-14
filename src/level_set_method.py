@@ -77,7 +77,7 @@ def perform_LSM(raw_img, scribbled_img, dt, max_iter=10000, region=Region.intens
         for _ in range(NR):
             phi = phi - (dt * f_abs_grad_phi(phi, dot_pitch, phi / np.sqrt(phi ** 2 + (2 * dot_pitch) ** 2), 1))
 
-        if (itr + 1) % JUMP == 0:
+        if (itr + 1) % DISPLAY_STEP == 0:
             plt.imshow(raw_img, cmap='gray')
             plt.contour(phi, colors='red', levels=0, linewidths=2)
             plt.show(block=False)

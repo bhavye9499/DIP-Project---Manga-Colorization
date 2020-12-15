@@ -1,21 +1,15 @@
-from src.colorizer import *
-from src.level_set_method import *
+import tkinter as tk
+
+from src.globals import globals
+from src.gui.windows.home import HomeWindow
+from src.gui.windows.input_image import InputImageWindow
+from src.gui.windows.output_image import OutputImageWindow
 
 if __name__ == '__main__':
-    np.seterr(divide='ignore', invalid='ignore')
-    raw_img = cv2.cvtColor(cv2.imread(path.join(RAW_INPUT_FOLDER, 'wing.png')), cv2.COLOR_BGR2GRAY)
-    scribbled_img = cv2.cvtColor(cv2.imread(path.join(SCRIBBLED_INPUT_FOLDER, 'wing.png')), cv2.COLOR_BGR2RGB)
-    # phi = perform_LSM(raw_img, scribbled_img, 0.1, region=Region.intensity)
+    root = tk.Tk()
 
-    # Pickle phi
-    # pickle.dump(phi, open('phi', 'wb'))
-    # phi = pickle.load(open('phi', 'rb'))
+    globals.home_window = HomeWindow(root)
+    globals.input_image_window = InputImageWindow(root)
+    globals.output_image_window = OutputImageWindow(root)
 
-    # Create mask for colorization
-    # phi[phi == 1] = 100
-    # phi[phi <= 0] = 1
-    # phi = np.ones_like(raw_img)
-    # colored_img = strokePreservingColorization(raw_img, phi, np.array([255, 100, 100]).astype(np.float32))
-    # plt.imshow(colored_img)
-    # plt.show()
-
+    globals.home_window.open_window()

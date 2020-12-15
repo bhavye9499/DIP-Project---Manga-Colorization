@@ -1,16 +1,22 @@
 from os import path
 from tkinter import simpledialog, filedialog
 
-from src import config
-from src.gui import globals
-from src.gui.constants import FILE_TYPES
+from src.globals import config, globals, tkinter_variables as tk_vars
+from src.globals.constants import FILE_TYPES
 
 
 def edit_break_off_threshold_command():
     response = simpledialog.askinteger(title='Break-off Threshold', prompt='Break-off Threshold:',
-                                       initialvalue=config.LSM_THRESHOLD)
+                                       initialvalue=config.LSM_THRESHOLD, minvalue=1)
     if isinstance(response, int):
         config.LSM_THRESHOLD = response
+
+
+def edit_clusters_command():
+    response = simpledialog.askinteger(title='Clusters', prompt='Clusters:', initialvalue=config.CLUSTERS,
+                                       minvalue=1)
+    if isinstance(response, int):
+        config.CLUSTERS = response
 
 
 def edit_display_step_command():
@@ -68,7 +74,7 @@ def edit_re_initializations_command():
 
 
 def edit_region_command():
-    config.REGION = globals.home_window.region_variable
+    config.REGION = tk_vars.region.get()
 
 
 def edit_time_step_command():
@@ -85,9 +91,9 @@ def edit_window_size_command():
 
 
 def file_open_image_command():
-    config.FILENAME = filedialog.askopenfilename(initialdir=globals.search_dir, title='Select An Image',
-                                                 filetypes=FILE_TYPES)
-    if config.FILENAME:
-        globals.search_dir = path.dirname(config.FILENAME)
-        globals.input_image_window.open_window(config.FILENAME)
-        globals.output_image_window.open_window(config.FILENAME)
+    globals.filename = filedialog.askopenfilename(initialdir=globals.search_dir, title='Select An Image',
+                                                  filetypes=FILE_TYPES)
+    if globals.filename:
+        globals.search_dir = path.dirname(globals.filename)
+        globals.input_image_window.open_window(globals.filename)
+        globals.output_image_window.open_window(globals.filename)

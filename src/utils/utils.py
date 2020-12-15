@@ -1,5 +1,6 @@
-from src.visualizer import *
-from src.imports import *
+import math
+import numpy as np
+from sklearn.cluster import DBSCAN
 
 
 def get_frequencies(shape):
@@ -10,6 +11,12 @@ def get_frequencies(shape):
     n = np.floor(np.log2(wavelengthMax / wavelengthMin))
     wavelength = np.power(2, np.arange(0, n - 1, 1)) * wavelengthMin
     return 1 / wavelength
+
+
+def get_hex_from_rgb(r, g, b):
+    pattern = '{:02x}'
+    hex_val = '#' + pattern.format(r) + pattern.format(g) + pattern.format(b)
+    return hex_val
 
 
 def get_pixel_neighbourhood(mat, location, shape):
@@ -27,12 +34,22 @@ def get_major_cluster(feature_vectors, eps=1, min_samples=20):
     yhat = model.fit_predict(feature_vectors)
     clusters, cluster_counts = np.unique(yhat, return_counts=True)
     print(f'clusters = {list(zip(clusters, cluster_counts))}')
-    visualize_clustered_feature_vectors(feature_vectors, yhat)
+    # visualize_clustered_feature_vectors(feature_vectors, yhat)
     M_cluster_counts = max(cluster_counts[1:] if clusters[0] == -1 else cluster_counts)
     M_cluster = clusters[np.where(cluster_counts == M_cluster_counts)[0][0]]
     row_ix = np.where(yhat == M_cluster)
     major_cluster = np.asarray(feature_vectors)[row_ix]
     return major_cluster
+
+
+def get_rgb_from_hex(s):
+    hex_val = s
+    if s[0] == '#':
+        hex_val = s[1:]
+    r_val = int(hex_val[:2], 16)
+    g_val = int(hex_val[2:4], 16)
+    b_val = int(hex_val[4:], 16)
+    return r_val, g_val, b_val
 
 
 def get_scribbled_pixels(scribbled_img, delta=10):

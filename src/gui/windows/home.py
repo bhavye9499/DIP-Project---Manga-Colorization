@@ -1,6 +1,7 @@
 import tkinter as tk
 
-from src.gui.commands.home_commands import *
+from src.globals.constants import Region
+from src.gui.commands.home_cmds import *
 
 
 class HomeWindow:
@@ -8,7 +9,7 @@ class HomeWindow:
         self.master = master
 
     def _add_heading(self):
-        self.heading = tk.Label(self.master, text='Manga Colorization', font=("Courier", 24, 'bold'), padx=5, pady=5)
+        self.heading = tk.Label(self.master, text='Manga Colorization', font=("Ubuntu", 24, 'bold'), padx=5, pady=5)
         self.heading.pack()
 
     def _add_menubar(self):
@@ -22,17 +23,18 @@ class HomeWindow:
         edit = tk.Menu(self.menubar, tearoff=0)
 
         region = tk.Menu(edit, tearoff=0)
-        self.region_variable = tk.IntVar()
-        region.add_radiobutton(label='Intensity-continuous', variable=self.region_variable, value=1,
+        tk_vars.region = tk.IntVar(self.master)
+        region.add_radiobutton(label='Intensity-continuous', variable=tk_vars.region, value=Region.intensity,
                                command=edit_region_command)
-        region.add_radiobutton(label='Pattern-continuous', variable=self.region_variable, value=2,
+        region.add_radiobutton(label='Pattern-continuous', variable=tk_vars.region, value=Region.pattern,
                                command=edit_region_command)
-        self.region_variable.set(1)
+        tk_vars.region.set(Region.intensity)
 
         intensity_params = tk.Menu(edit, tearoff=0)
         intensity_params.add_command(label='Gaussian sigma', command=edit_gaussian_sigma_command)
 
         pattern_params = tk.Menu(edit, tearoff=0)
+        pattern_params.add_command(label='Clusters', command=edit_clusters_command)
         pattern_params.add_command(label='Gabor Sigmas', command=edit_gabor_sigmas_command)
         pattern_params.add_command(label='Orientations', command=edit_orientations_command)
         pattern_params.add_command(label='Window Size', command=edit_window_size_command)
@@ -52,6 +54,10 @@ class HomeWindow:
         edit.add_cascade(label='LSM Params', menu=lsm_params)
 
         view = tk.Menu(self.menubar, tearoff=0)
+        view.add_command(label="Clustered Image Feature Vectors")
+        view.add_command(label="Distance Map")
+        view.add_command(label="Halting Filter Intensity")
+        view.add_command(label="Halting Filter Pattern")
         view.add_command(label="Intensity Params")
         view.add_command(label="Pattern Params")
         view.add_command(label="LSM Params")

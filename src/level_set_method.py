@@ -1,5 +1,8 @@
+import random
+from matplotlib import pyplot as plt
+
 from src.halting_filter import *
-from src.utils import *
+from src.utils.utils import *
 
 
 def curvature(phi, dot_pitch):

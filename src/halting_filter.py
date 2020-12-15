@@ -1,6 +1,10 @@
-from src.config import *
-from src.constants import *
-from src.utils import *
+from scipy import ndimage as ndi
+from skimage.filters import gabor
+from tqdm import tqdm
+
+from src.globals.config import *
+from src.globals.constants import Region
+from src.utils.utils import *
 
 
 def halting_filter(raw_img, scribbled_img, region):

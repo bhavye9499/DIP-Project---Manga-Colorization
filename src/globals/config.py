@@ -1,13 +1,14 @@
-from src.constants import Region
+from src.globals.constants import Region
 
 # general config
-FILENAME = None
+BRUSH_SIZE = 1
 REGION = Region.intensity
 
 # config for getting halting filter for intensity-continuous region
 SIGMA = 0.01
 
 # config for getting halting filter for pattern-continuous region
+CLUSTERS = 4
 ORIENTATIONS = 6
 SIGMAS = (1, 3)
 WINDOW_SIZE = 7

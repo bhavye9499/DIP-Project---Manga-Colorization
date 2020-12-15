@@ -1,4 +1,9 @@
-from src.imports import *
+import numpy as np
+from PIL import Image
+from matplotlib import pyplot as plt
+from skimage import color
+from sklearn.cluster import KMeans
+from sklearn.decomposition import TruncatedSVD
 
 
 def visualize_clustered_feature_vectors(feature_vectors, cluster_ids):

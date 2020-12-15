@@ -91,7 +91,7 @@ def edit_window_size_command():
 
 
 def file_open_image_command():
-    globals.filename = filedialog.askopenfilename(initialdir=globals.search_dir, title='Select An Image',
+    globals.filename = filedialog.askopenfilename(initialdir=globals.search_dir, title='Open Image',
                                                   filetypes=FILE_TYPES)
     if globals.filename:
         globals.search_dir = path.dirname(globals.filename)

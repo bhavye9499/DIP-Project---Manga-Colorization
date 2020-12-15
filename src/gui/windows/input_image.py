@@ -60,7 +60,7 @@ class InputImageWindow:
         common_colors_combobox.current(0)
         common_colors_combobox.bind('<<ComboboxSelected>>', common_colors_event_command)
 
-        tk_vars.brush_size = tk.IntVar(self.controls_frame)
+        tk_vars.brush_size = tk.IntVar(self.controls_frame, value=config.BRUSH_SIZE)
         brush_size_label = tk.Label(self.controls_frame, text='Brush Size', wraplength=100, justify=tk.LEFT)
         brush_size_spinbox = tk.Spinbox(self.controls_frame, width=3, from_=1, to=15, textvariable=tk_vars.brush_size,
                                         wrap=True, command=brush_size_command)
@@ -82,14 +82,14 @@ class InputImageWindow:
         self.menubar = tk.Menu(self.master)
 
         file = tk.Menu(self.menubar, tearoff=0)
-        file.add_command(label="New Image")
-        file.add_command(label="Save Image")
+        file.add_command(label="New Image       Ctrl+N", command=file_new_image_command)
+        file.add_command(label="Save Image      Ctrl+S", command=file_save_image_command)
         file.add_separator()
-        file.add_command(label="Close Window")
+        file.add_command(label="Close Window    Ctrl+W", command=self.close_window)
 
         edit = tk.Menu(self.menubar, tearoff=0)
-        edit.add_command(label="Undo")
-        edit.add_command(label="Clear All")
+        edit.add_command(label="Undo         Ctrl+Z", command=edit_undo_command)
+        edit.add_command(label="Clear All    Ctrl+X", command=edit_clear_all_command)
 
         help = tk.Menu(self.menubar, tearoff=0)
 
@@ -98,13 +98,18 @@ class InputImageWindow:
         self.menubar.add_cascade(label="Help", menu=help)
 
         self.master.config(menu=self.menubar)
+        self.master.bind('<' + EVENT_FLAG_CTRLKEY + '-' + EVENT_FLAG_KEYPRESS + '-n>', file_new_image_key_command)
+        self.master.bind('<' + EVENT_FLAG_CTRLKEY + '-' + EVENT_FLAG_KEYPRESS + '-s>', file_save_image_key_command)
+        self.master.bind('<' + EVENT_FLAG_CTRLKEY + '-' + EVENT_FLAG_KEYPRESS + '-w>', file_close_window_key_command)
+        self.master.bind('<' + EVENT_FLAG_CTRLKEY + '-' + EVENT_FLAG_KEYPRESS + '-z>', edit_undo_key_command)
+        self.master.bind('<' + EVENT_FLAG_CTRLKEY + '-' + EVENT_FLAG_KEYPRESS + '-x>', edit_clear_all_key_command)
 
     def _add_widgets(self):
         self._add_menubar()
         self._add_image()
         self._add_controls()
 
-    def _close_window(self):
+    def close_window(self):
         self.master.destroy()
 
     def _new_window(self):
@@ -119,7 +124,7 @@ class InputImageWindow:
         if self.master is None:
             self._new_window()
         else:
-            self._close_window()
+            self.close_window()
             self._new_window()
 
 

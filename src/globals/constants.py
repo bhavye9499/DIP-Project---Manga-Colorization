@@ -35,15 +35,20 @@ FILE_TYPES = [
     ('PNG files', '*.png'),
 ]
 
-EVENT_FLAG_ALTKEY = 'Alt_L'
-EVENT_FLAG_CTRLKEY = 'Control_L'
+EVENT_FLAG_ALTKEY = 'Alt'
+EVENT_FLAG_CTRLKEY = 'Control'
 EVENT_FLAG_ENTERKEY = 'Return'
-EVENT_FLAG_SHIFTKEY = 'Shift_L'
+EVENT_FLAG_KEYPRESS = 'Key'
+EVENT_FLAG_SHIFTKEY = 'Shift'
 
 EVENT_LBUTTONDOWN = 'ButtonPress'
 EVENT_LBUTTONUP = 'ButtonRelease'
 
 EVENT_MOUSEMOVE = 'Motion'
+
+FORMAT_JPG = 'jpg'
+FORMAT_JPEG = 'jpeg'
+FORMAT_PNG = 'png'
 
 
 class Region(enum.Enum):

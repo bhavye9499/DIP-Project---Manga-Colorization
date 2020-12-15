@@ -1,8 +1,7 @@
 from src.globals.constants import Region
 
 # general config
-BRUSH_SIZE = 1
-REGION = Region.intensity
+BRUSH_SIZE = 5
 
 # config for getting halting filter for intensity-continuous region
 SIGMA = 0.01
@@ -21,4 +20,6 @@ FA = 1
 DISPLAY_STEP = 50
 LSM_THRESHOLD = 10
 NR = 5
+REGION = Region.intensity
 RELAX_FACTOR = 0.4
+START_PIXEL = None

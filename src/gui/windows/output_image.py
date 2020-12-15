@@ -1,6 +1,8 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 
+from src.globals.constants import *
+
 
 class OutputImageWindow:
     def __init__(self, parent):
@@ -22,13 +24,13 @@ class OutputImageWindow:
         self.menubar = tk.Menu(self.master)
 
         file = tk.Menu(self.menubar, tearoff=0)
-        file.add_command(label="Save Image")
+        file.add_command(label="Save Image      Ctrl+S", command=file_save_image_command)
         file.add_separator()
-        file.add_command(label="Close Window")
+        file.add_command(label="Close Window    Ctrl+W", command=self.close_window)
 
         edit = tk.Menu(self.menubar, tearoff=0)
-        edit.add_command(label="Undo")
-        edit.add_command(label="Clear All")
+        edit.add_command(label="Undo         Ctrl+Z", command=edit_undo_command)
+        edit.add_command(label="Clear All    Ctrl+X", command=edit_clear_all_command)
 
         help = tk.Menu(self.menubar, tearoff=0)
 
@@ -37,12 +39,16 @@ class OutputImageWindow:
         self.menubar.add_cascade(label="Help", menu=help)
 
         self.master.config(menu=self.menubar)
+        self.master.bind('<' + EVENT_FLAG_CTRLKEY + '-' + EVENT_FLAG_KEYPRESS + '-s>', file_save_image_key_command)
+        self.master.bind('<' + EVENT_FLAG_CTRLKEY + '-' + EVENT_FLAG_KEYPRESS + '-w>', file_close_window_key_command)
+        self.master.bind('<' + EVENT_FLAG_CTRLKEY + '-' + EVENT_FLAG_KEYPRESS + '-z>', edit_undo_key_command)
+        self.master.bind('<' + EVENT_FLAG_CTRLKEY + '-' + EVENT_FLAG_KEYPRESS + '-x>', edit_clear_all_key_command)
 
     def _add_widgets(self):
         self._add_menubar()
         self._add_image()
 
-    def _close_window(self):
+    def close_window(self):
         self.master.destroy()
 
     def _new_window(self):
@@ -57,7 +63,7 @@ class OutputImageWindow:
         if self.master is None:
             self._new_window()
         else:
-            self._close_window()
+            self.close_window()
             self._new_window()
 
 

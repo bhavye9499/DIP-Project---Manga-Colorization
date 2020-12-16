@@ -92,7 +92,7 @@ class HomeWindow:
         option.add_command(label='Stop Segmentation', command=option_stop_segmentation_command)
         option.add_separator()
         option.add_command(label='Perform Colorization', command=option_perform_colorization_command)
-        # option.add_command(label='Redo Colorization', command=option_redo_colorization_command)
+        option.add_command(label='Redo Colorization', command=option_redo_colorization_command)
 
         help = tk.Menu(self.menubar, tearoff=0)
 

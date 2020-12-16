@@ -6,7 +6,7 @@ COMMON_COLORS = (
     'Blue',
     'Brown',
     'Green',
-    'Mustard'
+    'Mustard',
     'Orange',
     'Peach',
     'Purple',

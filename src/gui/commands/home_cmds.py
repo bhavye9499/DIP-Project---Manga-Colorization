@@ -131,6 +131,25 @@ def file_open_image_key_command(event):
 def option_perform_colorization_command():
     globals.prev_output_img = deepcopy(globals.curr_output_img)
 
+    color = np.asarray(globals.curr_scribbled_img)[config.START_PIXEL[1], config.START_PIXEL[0]]
+
+    colorization_method = Colorization(tk_vars.colorization_method.get())
+
+    if colorization_method == Colorization.color_replacement:
+        color_replacement(color)
+
+    elif colorization_method == Colorization.pattern_to_shading:
+        pattern_to_shading(color)
+
+    elif colorization_method == Colorization.stroke_preserving:
+        stroke_preserving(color)
+
+    update_output_image()
+
+
+def option_redo_colorization_command():
+    globals.prev_output_img = deepcopy(globals.curr_output_img)
+
     r_val = int(tk_vars.r.get())
     g_val = int(tk_vars.g.get())
     b_val = int(tk_vars.b.get())

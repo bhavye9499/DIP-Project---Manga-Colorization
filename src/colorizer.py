@@ -9,7 +9,6 @@ from src.utils.utils import map_mat, rgb2yuv
 
 def color_replacement(color):
     output_image = deepcopy(np.asarray(globals.curr_output_img))
-    print(output_image.flags)
     color = color.astype(np.float)
     output_image[:, :, 0][globals.phi <= 0] = color[0]
     output_image[:, :, 1][globals.phi <= 0] = color[1]

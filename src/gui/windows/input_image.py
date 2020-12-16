@@ -2,8 +2,6 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from PIL import ImageTk, Image
 
-import src.globals.globals
-from src import globals
 from src.gui.commands.input_image_cmds import *
 from src.globals.constants import *
 
@@ -25,9 +23,8 @@ class InputImageWindow:
         self.img_label.bind('<' + EVENT_LBUTTONUP + '>', brush_stroke_command)
         self.img_label.pack()
 
-        src.globals.globals.raw_img = Image.open(self.filename)
-        src.globals.globals.curr_scribbled_img = Image.open(self.filename)
-        src.globals.globals.curr_output_img = Image.open(self.filename)
+        globals.raw_img = Image.open(self.filename).convert('L')
+        globals.curr_scribbled_img = Image.open(self.filename).convert('RGB')
 
         self.img_frame.grid(row=0, column=0, padx=10, pady=10, sticky=tk.N + tk.S + tk.E + tk.W)
 

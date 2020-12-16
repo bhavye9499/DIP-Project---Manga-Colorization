@@ -2,22 +2,22 @@ from scipy import ndimage as ndi
 from skimage.filters import gabor
 from tqdm import tqdm
 
-from src.globals.config import *
+from src.globals import config
 from src.globals.constants import Region
 from src.utils.utils import *
 
 
-def halting_filter(raw_img, scribbled_img, region):
-    if region == Region.intensity:
+def halting_filter(raw_img, scribbled_img):
+    if config.REGION == Region.intensity:
         return halting_filter_intensity(raw_img)
-    elif region == Region.pattern:
+    elif config.REGION == Region.pattern:
         return halting_filter_pattern(raw_img, scribbled_img)
     else:
-        raise ValueError(f'Invalid region {region}! Valid lsm_type are {[e for e in Region]}')
+        raise ValueError(f'Invalid region {config.REGION}! Valid lsm_type are {[e for e in Region]}')
 
 
 def halting_filter_intensity(img):
-    gaussian_smoothed_img = ndi.gaussian_filter(img, SIGMA)
+    gaussian_smoothed_img = ndi.gaussian_filter(img, config.SIGMA)
     mag_grad_img = mag_grad2d(*np.gradient(gaussian_smoothed_img))
     hI = 1 / (1 + mag_grad_img ** 2)
     return hI
@@ -88,9 +88,11 @@ def pattern_features_of_image_using_skimage(img, N, sigmas, freqs, mode='reflect
 
 def halting_filter_pattern(raw_img, scribbled_img):
     freqs = get_frequencies(raw_img.shape)
-    filter_bank_size = ORIENTATIONS * len(SIGMAS) * len(freqs)
-    pattern_features = pattern_features_of_image_using_skimage(raw_img, ORIENTATIONS, SIGMAS, freqs, mode='reflect')
-    fvs_img = feature_vector_set_of_image(raw_img.shape, pattern_features, filter_bank_size, window_size=WINDOW_SIZE)
+    filter_bank_size = config.ORIENTATIONS * len(config.SIGMAS) * len(freqs)
+    pattern_features = pattern_features_of_image_using_skimage(raw_img, config.ORIENTATIONS, config.SIGMAS, freqs,
+                                                               mode='reflect')
+    fvs_img = feature_vector_set_of_image(raw_img.shape, pattern_features, filter_bank_size,
+                                          window_size=config.WINDOW_SIZE)
     fv_user = feature_vector_user(scribbled_img, fvs_img)
     d_map = distance_map(raw_img.shape, fvs_img, fv_user)
     hP = 1 / (1 + np.abs(d_map))

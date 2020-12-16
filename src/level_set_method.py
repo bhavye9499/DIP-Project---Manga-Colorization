@@ -1,8 +1,8 @@
 import random
 from matplotlib import pyplot as plt
 
+from src.globals import config, globals
 from src.halting_filter import *
-from src.utils.utils import *
 
 
 def curvature(phi, dot_pitch):
@@ -43,7 +43,7 @@ def f_abs_grad_phi(phi, dot_pitch, f, c=0):
 
 
 def get_phi0(shape, center, radius):
-    P, Q = shape
+    P, Q = shape[:2]
     y = np.linspace(0, P - 1, P)
     x = np.linspace(0, Q - 1, Q)
     X, Y = np.meshgrid(x, y)
@@ -51,48 +51,52 @@ def get_phi0(shape, center, radius):
     return phi_0
 
 
-def perform_LSM(raw_img, scribbled_img, dt, max_iter=10000, region=Region.intensity, leak_proofing=False):
-    start_pixel = random.choice(get_scribbled_pixels(scribbled_img))
+def perform_LSM():
+    raw_img = np.asarray(globals.raw_img)
+    scribbled_img = np.asarray(globals.curr_scribbled_img)
 
     dot_pitch = 1
-    phi = get_phi0(raw_img.shape, start_pixel, dot_pitch)
+    phi = get_phi0(raw_img.shape, config.START_PIXEL, dot_pitch)
 
-    h = halting_filter(raw_img, scribbled_img, region)
+    h = halting_filter(raw_img, scribbled_img)
 
     # For intensity-continuous propagation only
     hFI = 0
-    if leak_proofing:
+    if config.REGION == Region.intensity and config.LEAK_PROOFING:
         temp = (1 / h) - 1
         M1 = np.max(temp)
         M2 = np.min(temp)
-        hFI = h * (-1 * FA) * np.clip((temp - M2) / (M1 - M2 - RELAX_FACTOR), 0, 1)
+        hFI = h * (-1 * config.FA) * np.clip((temp - M2) / (M1 - M2 - config.RELAX_FACTOR), 0, 1)
 
+    config.CONTINUE_LSM = True
     prev_omega = np.sum(phi <= 0)
+    itr = 0
 
-    for itr in range(max_iter):
-        FG = -EPSILON * curvature(phi, dot_pitch)
-        F = h * (FA + FG)
-        if leak_proofing:
+    while itr < config.MAX_ITERATIONS and config.CONTINUE_LSM:
+        FG = -config.EPSILON * curvature(phi, dot_pitch)
+        F = h * (config.FA + FG)
+        if config.REGION == Region.intensity and config.LEAK_PROOFING:
             F += hFI
 
-        phi = phi - (dt * f_abs_grad_phi(phi, dot_pitch, F))
+        phi = phi - (config.DT * f_abs_grad_phi(phi, dot_pitch, F))
 
-        for _ in range(NR):
-            phi = phi - (dt * f_abs_grad_phi(phi, dot_pitch, phi / np.sqrt(phi ** 2 + (2 * dot_pitch) ** 2), 1))
+        for _ in range(config.NR):
+            phi = phi - (config.DT * f_abs_grad_phi(phi, dot_pitch, phi / np.sqrt(phi ** 2 + (2 * dot_pitch) ** 2), 1))
 
-        if (itr + 1) % DISPLAY_STEP == 0:
+        if (itr + 1) % config.DISPLAY_STEP == 0:
+            plt.clf()
             plt.imshow(raw_img, cmap='gray')
             plt.contour(phi, colors='red', levels=0, linewidths=2)
             plt.show(block=False)
-            plt.pause(1e-4)
-            plt.clf()
+            plt.pause(1e-3)
 
             cur_omega = np.sum(phi <= 0)
-            print(cur_omega - prev_omega)
-            if cur_omega - prev_omega < LSM_THRESHOLD:
+            # print(cur_omega - prev_omega)
+            if cur_omega - prev_omega < config.LSM_THRESHOLD:
                 break
             prev_omega = cur_omega
 
-    print('LSM Completed')
+        itr += 1
 
-    return phi
+    globals.info_message('Segmentation Completed.')
+    globals.phi = phi

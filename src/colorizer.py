@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
+from PIL import Image
 
+from src.globals import globals
 from src.utils.utils import map_mat
 
 
@@ -14,7 +16,7 @@ def rgb2yuv(color):
     return yuv_img[0][0]
 
 
-def patternToShading(image, mask, color):
+def pattern_to_shading(color):
     """
     Perform shading of the masked region with the given RGB color
     and return the image in RGB format.
@@ -22,7 +24,8 @@ def patternToShading(image, mask, color):
     mask: array of 0s and 1s with same shape of image array
     color: (r, g, b) color to shade the masked region
     """
-    yuv_image = cv2.cvtColor(cv2.cvtColor(image, cv2.COLOR_GRAY2BGR), cv2.COLOR_BGR2YUV)
+    image = np.asarray(globals.curr_output_img)
+    yuv_image = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
     y_user, u_user, v_user = rgb2yuv(color)
 
     # Extract YUV channels
@@ -34,16 +37,16 @@ def patternToShading(image, mask, color):
     s = (s - s.min()) / (s.max() - s.min())  # Normalize to range [0, 1]
 
     # Calculate new YUV channels
-    y_new[mask == 1] = (y_user * s)[mask == 1]
-    u_new[mask == 1] = u_user
-    v_new[mask == 1] = v_user
+    y_new[globals.phi == 1] = (y_user * s)[globals.phi == 1]
+    u_new[globals.phi == 1] = u_user
+    v_new[globals.phi == 1] = v_user
 
     new_image = cv2.merge((y_new, u_new, v_new))
+    output_img = cv2.cvtColor(new_image, cv2.COLOR_YUV2RGB)
+    globals.curr_output_img = Image.fromarray(output_img)
 
-    return cv2.cvtColor(new_image, cv2.COLOR_YUV2RGB)
 
-
-def strokePreservingColorization(image, mask, color, gauss_size=(7, 7), alpha=0.8):
+def strokePreservingColorization(color, gauss_size=(7, 7), alpha=0.8):
     """
     Perform stroke preserving colorization of the masked region
     with the given YUV color and return the image in RGB format.
@@ -51,6 +54,7 @@ def strokePreservingColorization(image, mask, color, gauss_size=(7, 7), alpha=0.
     mask: array of 0s and 1s with same shape of image array
     color: (y, u, v) color to colorize the masked region
     """
+    image = np.asarray(globals.curr_output_img)
     yuv_image = cv2.cvtColor(cv2.cvtColor(image, cv2.COLOR_GRAY2BGR), cv2.COLOR_BGR2YUV)
     y_user, u_user, v_user = rgb2yuv(color)
 
@@ -63,10 +67,10 @@ def strokePreservingColorization(image, mask, color, gauss_size=(7, 7), alpha=0.
     kernel = map_mat(np.square(np.abs(1 - h1)))
 
     # Calculate new YUV channels
-    y_new[(mask == 1) & (kernel > alpha)] = (y_user * kernel)[(mask == 1) & (kernel > alpha)]
-    u_new[(mask == 1) & (kernel > alpha)] = u_user
-    v_new[(mask == 1) & (kernel > alpha)] = v_user
+    y_new[(globals.phi == 1) & (kernel > alpha)] = (y_user * kernel)[(globals.phi == 1) & (kernel > alpha)]
+    u_new[(globals.phi == 1) & (kernel > alpha)] = u_user
+    v_new[(globals.phi == 1) & (kernel > alpha)] = v_user
 
     new_image = cv2.merge((y_new, u_new, v_new))
-
-    return cv2.cvtColor(new_image, cv2.COLOR_YUV2RGB)
+    output_img = cv2.cvtColor(new_image, cv2.COLOR_YUV2RGB)
+    globals.curr_output_img = Image.fromarray(output_img)

@@ -51,7 +51,7 @@ def file_save_image_key_command(event):
 def edit_clear_all_command():
     globals.prev_scribbled_img = deepcopy(globals.curr_scribbled_img)
     globals.curr_scribbled_img = deepcopy(globals.raw_img)
-    update_image()
+    update_input_image()
 
 
 def edit_clear_all_key_command(event):
@@ -62,7 +62,7 @@ def edit_undo_command():
     if globals.prev_scribbled_img is not None:
         globals.curr_scribbled_img = globals.prev_scribbled_img
         globals.prev_scribbled_img = None
-        update_image()
+        update_input_image()
 
 
 def edit_undo_key_command(event):
@@ -96,10 +96,10 @@ def draw_circle(event):
     b_val = int(tk_vars.b.get())
     hex_val = utils.get_hex_from_rgb(r_val, g_val, b_val)
     draw.ellipse(twoPointList, fill=hex_val)
-    update_image()
+    update_input_image()
 
 
-def update_image():
+def update_input_image():
     global img
     img = ImageTk.PhotoImage(globals.curr_scribbled_img)
     globals.input_image_window.img_label.config(image=img)

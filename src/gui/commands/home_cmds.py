@@ -1,8 +1,19 @@
+import numpy as np
+from copy import deepcopy
 from os import path
 from tkinter import simpledialog, filedialog
 
+from src.colorizer import pattern_to_shading, strokePreservingColorization
+from src.level_set_method import perform_LSM
 from src.globals import config, globals, tkinter_variables as tk_vars
-from src.globals.constants import FILE_TYPES
+from src.globals.constants import Colorization, FILE_TYPES, Region
+from src.gui.commands.output_image_cmds import update_output_image
+
+
+def edit_ballooning_force_command():
+    response = simpledialog.askfloat(title='Ballooning Force', prompt='Ballooning Force:', initialvalue=config.FA)
+    if isinstance(response, float):
+        config.FA = response
 
 
 def edit_break_off_threshold_command():
@@ -19,6 +30,13 @@ def edit_clusters_command():
         config.CLUSTERS = response
 
 
+def edit_curvature_coefficient_command():
+    response = simpledialog.askfloat(title='Curvature Coefficient', prompt='Curvature Coefficient:',
+                                     initialvalue=config.EPSILON)
+    if isinstance(response, float):
+        config.EPSILON = response
+
+
 def edit_display_step_command():
     response = simpledialog.askinteger(title='Display Step', prompt='Display Step:', initialvalue=config.DISPLAY_STEP,
                                        minvalue=1)
@@ -26,16 +44,8 @@ def edit_display_step_command():
         config.DISPLAY_STEP = response
 
 
-def edit_epsilon_command():
-    response = simpledialog.askfloat(title='Epsilon', prompt='Epsilon:', initialvalue=config.EPSILON)
-    if isinstance(response, float):
-        config.EPSILON = response
-
-
-def edit_fa_command():
-    response = simpledialog.askfloat(title='FA', prompt='FA:', initialvalue=config.FA)
-    if isinstance(response, float):
-        config.FA = response
+def edit_colorization_method_command():
+    config.COLORIZATION_METHOD = Colorization(tk_vars.colorization_method.get())
 
 
 def edit_gabor_sigmas_command():
@@ -59,6 +69,13 @@ def edit_orientations_command():
         config.ORIENTATIONS = response
 
 
+def edit_max_iterations_command():
+    response = simpledialog.askinteger(title='Maximum Iterations', prompt='Maximum Iterations:',
+                                       initialvalue=config.MAX_ITERATIONS, minvalue=1)
+    if isinstance(response, int):
+        config.MAX_ITERATIONS = response
+
+
 def edit_relaxation_factor_command():
     response = simpledialog.askfloat(title='Relaxation Factor', prompt='Relaxation Factor:',
                                      initialvalue=config.RELAX_FACTOR)
@@ -74,7 +91,11 @@ def edit_re_initializations_command():
 
 
 def edit_region_command():
-    config.REGION = tk_vars.region.get()
+    config.REGION = Region(tk_vars.region.get())
+
+
+def edit_leak_proofing_command():
+    config.LEAK_PROOFING = tk_vars.leak_proofing.get()
 
 
 def edit_time_step_command():
@@ -90,6 +111,10 @@ def edit_window_size_command():
         config.WINDOW_SIZE = response
 
 
+def file_close_window_key_command(event):
+    globals.home_window.close_window()
+
+
 def file_open_image_command():
     globals.filename = filedialog.askopenfilename(initialdir=globals.search_dir, title='Open Image',
                                                   filetypes=FILE_TYPES)
@@ -97,3 +122,36 @@ def file_open_image_command():
         globals.search_dir = path.dirname(globals.filename)
         globals.input_image_window.open_window(globals.filename)
         globals.output_image_window.open_window(globals.filename)
+
+
+def file_open_image_key_command(event):
+    file_open_image_command()
+
+
+def option_perform_colorization_command():
+    globals.prev_output_img = deepcopy(globals.curr_output_img)
+
+    r_val = int(tk_vars.r.get())
+    g_val = int(tk_vars.g.get())
+    b_val = int(tk_vars.b.get())
+    color = np.array([r_val, g_val, b_val])
+
+    colorization_method = Colorization(tk_vars.colorization_method.get())
+
+    if colorization_method == Colorization.pattern_to_shading:
+        pattern_to_shading(color)
+
+    elif colorization_method == Colorization.stroke_preserving:
+        strokePreservingColorization(color)
+
+    print('hi')
+
+    update_output_image()
+
+
+def option_start_segmentation_command():
+    perform_LSM()
+
+
+def option_stop_segmentation_command():
+    config.CONTINUE_LSM = False

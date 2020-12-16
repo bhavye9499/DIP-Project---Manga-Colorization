@@ -1,7 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 
-from src.globals.constants import *
+from src.gui.commands.output_image_cmds import *
 
 
 class OutputImageWindow:
@@ -17,6 +17,8 @@ class OutputImageWindow:
         img = ImageTk.PhotoImage(Image.open(self.filename))
         img_label = tk.Label(self.img_frame, image=img)
         img_label.pack()
+
+        globals.curr_output_img = Image.open(self.filename).convert('RGB')
 
         self.img_frame.grid(row=0, column=0, padx=10, pady=10, sticky=tk.N + tk.S + tk.E + tk.W)
 

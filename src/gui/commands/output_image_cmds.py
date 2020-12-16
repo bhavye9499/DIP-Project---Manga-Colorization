@@ -40,7 +40,7 @@ def file_save_image_key_command(event):
 def edit_clear_all_command():
     globals.prev_output_img = deepcopy(globals.curr_output_img)
     globals.curr_output_img = deepcopy(globals.raw_img)
-    update_image()
+    update_output_image()
 
 
 def edit_clear_all_key_command(event):
@@ -51,14 +51,14 @@ def edit_undo_command():
     if globals.prev_output_img is not None:
         globals.curr_output_img = globals.prev_output_img
         globals.prev_output_img = None
-        update_image()
+        update_output_image()
 
 
 def edit_undo_key_command(event):
     edit_undo_command()
 
 
-def update_image():
+def update_output_image():
     global img
     img = ImageTk.PhotoImage(globals.curr_output_img)
     globals.input_image_window.img_label.config(image=img)

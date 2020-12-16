@@ -1,5 +1,7 @@
 # home window variables
 region = None
+leak_proofing = None
+colorization_method = None
 
 # input image window variables
 r = None

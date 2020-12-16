@@ -1,3 +1,4 @@
+from os import path, pardir
 from tkinter import messagebox
 
 home_window = None
@@ -5,8 +6,8 @@ input_image_window = None
 output_image_window = None
 
 filename = None
-search_dir = '/media/raw'  # TODO change to '/'
-save_dir = '/media/raw'  # TODO change to '/'
+save_dir = path.join(path.dirname(path.abspath(__file__)), pardir, pardir, 'media', 'output')  # TODO change to '/'
+search_dir = path.join(path.dirname(path.abspath(__file__)), pardir, pardir, 'media', 'input')  # TODO change to '/'
 
 drawing = False
 

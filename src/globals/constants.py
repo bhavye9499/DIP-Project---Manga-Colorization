@@ -6,6 +6,7 @@ COMMON_COLORS = (
     'Blue',
     'Brown',
     'Green',
+    'Mustard'
     'Orange',
     'Peach',
     'Purple',
@@ -19,6 +20,7 @@ COMMON_COLORS_HEX_CODES = {
     'Blue': '#0000ff',
     'Brown': '#964b00',
     'Green': '#00ff00',
+    'Mustard': '#eaaa00',
     'Orange': '#ffa500',
     'Peach': '#ffe5b4',
     'Purple': '#800080',

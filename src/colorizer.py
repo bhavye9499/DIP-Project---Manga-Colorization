@@ -1,19 +1,20 @@
 import cv2
 import numpy as np
+from copy import deepcopy
 from PIL import Image
 
 from src.globals import globals
-from src.utils.utils import map_mat
+from src.utils.utils import map_mat, rgb2yuv
 
 
-def rgb2yuv(color):
-    """
-    Converts the rgb color to yuv color
-    :param color: (r, g, b) color
-    :return: (y, u, v) color
-    """
-    yuv_img = cv2.cvtColor(np.array([[color]]), cv2.COLOR_BGR2YUV)
-    return yuv_img[0][0]
+def color_replacement(color):
+    output_image = deepcopy(np.asarray(globals.curr_output_img))
+    print(output_image.flags)
+    color = color.astype(np.float)
+    output_image[:, :, 0][globals.phi <= 0] = color[0]
+    output_image[:, :, 1][globals.phi <= 0] = color[1]
+    output_image[:, :, 2][globals.phi <= 0] = color[2]
+    globals.curr_output_img = Image.fromarray(output_image)
 
 
 def pattern_to_shading(color):
@@ -36,17 +37,22 @@ def pattern_to_shading(color):
     s = cv2.boxFilter(y, -1, (3, 3), (-1, -1))
     s = (s - s.min()) / (s.max() - s.min())  # Normalize to range [0, 1]
 
+    # Creating mask for colorization
+    mask = np.zeros_like(globals.phi)
+    mask[globals.phi == 1] = 100
+    mask[globals.phi <= 0] = 1
+
     # Calculate new YUV channels
-    y_new[globals.phi == 1] = (y_user * s)[globals.phi == 1]
-    u_new[globals.phi == 1] = u_user
-    v_new[globals.phi == 1] = v_user
+    y_new[mask == 1] = (y_user * s)[mask == 1]
+    u_new[mask == 1] = u_user
+    v_new[mask == 1] = v_user
 
     new_image = cv2.merge((y_new, u_new, v_new))
-    output_img = cv2.cvtColor(new_image, cv2.COLOR_YUV2RGB)
-    globals.curr_output_img = Image.fromarray(output_img)
+    output_image = cv2.cvtColor(new_image, cv2.COLOR_YUV2RGB)
+    globals.curr_output_img = Image.fromarray(output_image)
 
 
-def strokePreservingColorization(color, gauss_size=(7, 7), alpha=0.8):
+def stroke_preserving(color, gauss_size=(7, 7), alpha=0.8):
     """
     Perform stroke preserving colorization of the masked region
     with the given YUV color and return the image in RGB format.
@@ -66,10 +72,15 @@ def strokePreservingColorization(color, gauss_size=(7, 7), alpha=0.8):
     h1 = 1 / (1 + np.abs(cv2.Laplacian(gaussian, -1)))
     kernel = map_mat(np.square(np.abs(1 - h1)))
 
+    # Creating mask for colorization
+    mask = np.zeros_like(globals.phi)
+    mask[globals.phi == 1] = 100
+    mask[globals.phi <= 0] = 1
+
     # Calculate new YUV channels
-    y_new[(globals.phi == 1) & (kernel > alpha)] = (y_user * kernel)[(globals.phi == 1) & (kernel > alpha)]
-    u_new[(globals.phi == 1) & (kernel > alpha)] = u_user
-    v_new[(globals.phi == 1) & (kernel > alpha)] = v_user
+    y_new[(mask == 1) & (kernel > alpha)] = (y_user * kernel)[(mask == 1) & (kernel > alpha)]
+    u_new[(mask == 1) & (kernel > alpha)] = u_user
+    v_new[(mask == 1) & (kernel > alpha)] = v_user
 
     new_image = cv2.merge((y_new, u_new, v_new))
     output_img = cv2.cvtColor(new_image, cv2.COLOR_YUV2RGB)

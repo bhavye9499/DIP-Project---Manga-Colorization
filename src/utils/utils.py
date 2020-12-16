@@ -1,4 +1,6 @@
 import math
+
+import cv2
 import numpy as np
 from sklearn.cluster import DBSCAN
 
@@ -43,9 +45,7 @@ def get_major_cluster(feature_vectors, eps=1, min_samples=20):
 
 
 def get_rgb_from_hex(s):
-    hex_val = s
-    if s[0] == '#':
-        hex_val = s[1:]
+    hex_val = s[-6:]
     r_val = int(hex_val[:2], 16)
     g_val = int(hex_val[2:4], 16)
     b_val = int(hex_val[4:], 16)
@@ -93,3 +93,14 @@ def map_mat(mat, mn=0, mx=1):
 def normalize_and_scale(f):
     f_new = f - np.min(f)
     return (f_new / np.max(f_new)) * 255
+
+
+def rgb2yuv(color):
+    """
+    Converts the rgb color to yuv color
+    :param color: (r, g, b) color
+    :return: (y, u, v) color
+    """
+    color = color.astype(np.float)
+    yuv_img = cv2.cvtColor(np.array([[color]]), cv2.COLOR_BGR2YUV)
+    return yuv_img[0][0]

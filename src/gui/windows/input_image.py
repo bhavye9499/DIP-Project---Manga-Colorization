@@ -123,12 +123,3 @@ class InputImageWindow:
         else:
             self.close_window()
             self._new_window()
-
-
-if __name__ == '__main__':
-    root = tk.Tk()
-    globals.input_image_window = InputImageWindow(root)
-    btn = tk.Button(root, text="open", command=lambda: globals.input_image_window.
-                    open_window('/home/bhavye/Desktop/DIP/Project/media/raw/tree.jpg'))
-    btn.pack()
-    root.mainloop()

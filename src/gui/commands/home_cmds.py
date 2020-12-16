@@ -3,7 +3,7 @@ from copy import deepcopy
 from os import path
 from tkinter import simpledialog, filedialog
 
-from src.colorizer import pattern_to_shading, strokePreservingColorization
+from src.colorizer import color_replacement, pattern_to_shading, stroke_preserving
 from src.level_set_method import perform_LSM
 from src.globals import config, globals, tkinter_variables as tk_vars
 from src.globals.constants import Colorization, FILE_TYPES, Region
@@ -138,13 +138,14 @@ def option_perform_colorization_command():
 
     colorization_method = Colorization(tk_vars.colorization_method.get())
 
-    if colorization_method == Colorization.pattern_to_shading:
+    if colorization_method == Colorization.color_replacement:
+        color_replacement(color)
+
+    elif colorization_method == Colorization.pattern_to_shading:
         pattern_to_shading(color)
 
     elif colorization_method == Colorization.stroke_preserving:
-        strokePreservingColorization(color)
-
-    print('hi')
+        stroke_preserving(color)
 
     update_output_image()
 

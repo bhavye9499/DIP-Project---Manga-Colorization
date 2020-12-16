@@ -61,4 +61,4 @@ def edit_undo_key_command(event):
 def update_output_image():
     global img
     img = ImageTk.PhotoImage(globals.curr_output_img)
-    globals.input_image_window.img_label.config(image=img)
+    globals.output_image_window.img_label.config(image=img)

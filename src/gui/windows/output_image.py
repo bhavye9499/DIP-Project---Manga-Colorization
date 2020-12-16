@@ -15,8 +15,8 @@ class OutputImageWindow:
 
         global img
         img = ImageTk.PhotoImage(Image.open(self.filename))
-        img_label = tk.Label(self.img_frame, image=img)
-        img_label.pack()
+        self.img_label = tk.Label(self.img_frame, image=img)
+        self.img_label.pack()
 
         globals.curr_output_img = Image.open(self.filename).convert('RGB')
 
@@ -67,10 +67,3 @@ class OutputImageWindow:
         else:
             self.close_window()
             self._new_window()
-
-
-if __name__ == '__main__':
-    root = tk.Tk()
-    op_img_screen = OutputImageWindow(root)
-    btn = tk.Button(root, text="open", command=op_img_screen.open_window).pack()
-    root.mainloop()

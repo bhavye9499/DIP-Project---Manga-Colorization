@@ -6,7 +6,7 @@ from PIL import ImageDraw, ImageTk
 
 from src.globals import globals, config, tkinter_variables as tk_vars
 from src.globals.constants import *
-from src.gui.commands.home_cmds import file_open_image_command
+from src.gui.commands import home_cmds
 from src.utils import utils
 
 
@@ -17,7 +17,7 @@ def file_close_window_key_command(event):
 
 
 def file_new_image_command():
-    file_open_image_command()
+    home_cmds.file_open_image_command()
 
 
 def file_new_image_key_command(event):
@@ -50,7 +50,7 @@ def file_save_image_key_command(event):
 
 def edit_clear_all_command():
     globals.prev_scribbled_img = deepcopy(globals.curr_scribbled_img)
-    globals.curr_scribbled_img = deepcopy(globals.raw_img)
+    globals.curr_scribbled_img = deepcopy(globals.raw_img).convert('RGB')
     update_input_image()
 
 

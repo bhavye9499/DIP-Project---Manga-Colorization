@@ -73,16 +73,20 @@ def edit_undo_key_command(event):
 # ----------------------------------------
 def brush_stroke_command(event):
     if str(event.type) == EVENT_LBUTTONDOWN:
-        globals.drawing = True
         config.START_PIXEL = (event.x, event.y)
+        globals.reset_globals()
+        globals.drawing = True
         globals.prev_scribbled_img = deepcopy(globals.curr_scribbled_img)
+        globals.scribbled_pixels = np.array([[event.x, event.y]])
 
     elif str(event.type) == EVENT_MOUSEMOVE:
         if globals.drawing:
+            globals.scribbled_pixels = np.append(globals.scribbled_pixels, [[event.x, event.y]], axis=0)
             draw_circle(event)
 
     elif str(event.type) == EVENT_LBUTTONUP:
         globals.drawing = False
+        np.append(globals.scribbled_pixels, [[event.x, event.y]], axis=0)
         draw_circle(event)
 
 

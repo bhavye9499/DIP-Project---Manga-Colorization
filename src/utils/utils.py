@@ -2,7 +2,8 @@ import math
 
 import cv2
 import numpy as np
-from sklearn.cluster import DBSCAN
+from skimage import color
+from sklearn.cluster import DBSCAN, KMeans
 
 
 def get_frequencies(shape):
@@ -95,12 +96,21 @@ def normalize_and_scale(f):
     return (f_new / np.max(f_new)) * 255
 
 
-def rgb2yuv(color):
+def perform_clustering(img_fvs, n_clusters):
+    P, Q, R = img_fvs.shape
+    model = KMeans(n_clusters=n_clusters)
+    X = np.reshape(img_fvs, (P * Q, R))
+    yhat = model.fit_predict(X)
+    L = color.label2rgb(yhat)
+    return np.reshape(L, (P, Q, 3))
+
+
+def rgb2yuv(rgb_color):
     """
     Converts the rgb color to yuv color
-    :param color: (r, g, b) color
+    :param rgb_color: (r, g, b) color
     :return: (y, u, v) color
     """
-    color = color.astype(np.float)
-    yuv_img = cv2.cvtColor(np.array([[color]]), cv2.COLOR_BGR2YUV)
-    return yuv_img[0][0]
+    rgb_color = rgb_color.astype(np.float)
+    yuv_color = cv2.cvtColor(np.array([[rgb_color]]), cv2.COLOR_BGR2YUV)
+    return yuv_color[0][0]

@@ -3,16 +3,16 @@ import numpy as np
 from copy import deepcopy
 from PIL import Image
 
-from src.globals import globals
+from src.globals import config, globals
 from src.utils.utils import map_mat, rgb2yuv
 
 
 def color_replacement(color):
     output_image = deepcopy(np.asarray(globals.curr_output_img))
     color = color.astype(np.float)
-    output_image[:, :, 0][globals.phi <= 0] = color[0]
-    output_image[:, :, 1][globals.phi <= 0] = color[1]
-    output_image[:, :, 2][globals.phi <= 0] = color[2]
+    output_image[:, :, 0][globals.phi <= config.PHI_THRESHOLD] = color[0]
+    output_image[:, :, 1][globals.phi <= config.PHI_THRESHOLD] = color[1]
+    output_image[:, :, 2][globals.phi <= config.PHI_THRESHOLD] = color[2]
     globals.curr_output_img = Image.fromarray(output_image)
 
 

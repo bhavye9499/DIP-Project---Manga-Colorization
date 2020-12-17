@@ -1,16 +1,17 @@
 from src.globals.constants import *
 
 # general config
-BRUSH_SIZE = 5
+BRUSH_SIZE = 3
 COLORIZATION_METHOD = Colorization.color_replacement
+PHI_THRESHOLD = 0.0
 
 # config for getting halting filter for intensity-continuous region
-SIGMA = 0.01
+GAUSSIAN_SIGMA = 0.01
 
 # config for getting halting filter for pattern-continuous region
 CLUSTERS = 4
 ORIENTATIONS = 6
-SIGMAS = (1, 3)
+GABOR_SIGMAS = (1, 3)
 WINDOW_SIZE = 7
 
 # config for level set method

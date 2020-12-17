@@ -1,9 +1,9 @@
 import numpy as np
 from PIL import Image
 from matplotlib import pyplot as plt
-from skimage import color
-from sklearn.cluster import KMeans
 from sklearn.decomposition import TruncatedSVD
+
+from src.utils import utils
 
 
 def visualize_clustered_feature_vectors(feature_vectors, cluster_ids):
@@ -30,13 +30,8 @@ def visualize_feature_vectors(feature_vectors):
     plt.show()
 
 
-def visualize_feature_vector_set_of_image(img_feature_vector_set, n_clusters, cmap=None):
-    P, Q, R = img_feature_vector_set.shape
-    model = KMeans(n_clusters=n_clusters)
-    X = np.reshape(img_feature_vector_set, (P * Q, R))
-    yhat = model.fit_predict(X)
-    L = color.label2rgb(yhat)
-    output = np.reshape(L, (P, Q, 3))
+def visualize_image_feature_vectors(img_fvs, n_clusters, cmap=None):
+    output = utils.perform_clustering(img_fvs, n_clusters)
     plt.imshow(output, cmap=cmap)
     plt.show()
 
@@ -49,6 +44,18 @@ def visualize_filter_bank(filter_bank, m, n):
                 axs[j].imshow(np.real(filter_bank[i * m + j]), cmap='gray')
             else:
                 axs[i, j].imshow(np.real(filter_bank[i * n + j]), cmap='gray')
+    plt.show()
+
+
+def visualize_halting_filter_intensity(hI):
+    plt.imshow(utils.log_transform(hI), cmap='gray')
+    plt.show()
+    plt.imshow(utils.log_transform(hI), cmap='gray')
+    plt.show()
+
+
+def visualize_halting_filter_pattern(hP):
+    plt.imshow(hP, cmap='gray')
     plt.show()
 
 

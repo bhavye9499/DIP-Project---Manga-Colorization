@@ -52,13 +52,12 @@ def get_phi0(shape, center, radius):
 
 
 def perform_LSM():
-    raw_img = np.asarray(globals.raw_img)
-    scribbled_img = np.asarray(globals.curr_scribbled_img)
+    raw_img_arr = np.asarray(globals.raw_img)
 
     dot_pitch = 1
-    phi = get_phi0(raw_img.shape, config.START_PIXEL, dot_pitch)
+    phi = get_phi0(raw_img_arr.shape, config.START_PIXEL, dot_pitch)
 
-    h = halting_filter(raw_img, scribbled_img)
+    h = halting_filter(raw_img_arr)
 
     # For intensity-continuous propagation only
     hFI = 0
@@ -85,7 +84,7 @@ def perform_LSM():
 
         if (itr + 1) % config.DISPLAY_STEP == 0:
             plt.clf()
-            plt.imshow(raw_img, cmap='gray')
+            plt.imshow(raw_img_arr, cmap='gray')
             plt.contour(phi, colors='red', levels=0, linewidths=2)
             plt.show(block=False)
             plt.pause(1e-3)

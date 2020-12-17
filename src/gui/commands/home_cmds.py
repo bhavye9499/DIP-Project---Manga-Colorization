@@ -4,10 +4,17 @@ from os import path
 from tkinter import simpledialog, filedialog
 
 from src.colorizer import color_replacement, pattern_to_shading, stroke_preserving
+from src.halting_filter import (
+    check_distance_map,
+    check_image_feature_vectors,
+    halting_filter_intensity,
+    halting_filter_pattern,
+)
 from src.level_set_method import perform_LSM
 from src.globals import config, globals, tkinter_variables as tk_vars
 from src.globals.constants import Colorization, FILE_TYPES, Region
 from src.gui.commands.output_image_cmds import update_output_image
+from src.utils import utils, visualizer
 
 
 def edit_ballooning_force_command():
@@ -18,7 +25,7 @@ def edit_ballooning_force_command():
 
 def edit_break_off_threshold_command():
     response = simpledialog.askinteger(title='Break-off Threshold', prompt='Break-off Threshold:',
-                                       initialvalue=config.LSM_THRESHOLD, minvalue=1)
+                                       initialvalue=config.LSM_THRESHOLD, minvalue=0)
     if isinstance(response, int):
         config.LSM_THRESHOLD = response
 
@@ -28,6 +35,10 @@ def edit_clusters_command():
                                        minvalue=1)
     if isinstance(response, int):
         config.CLUSTERS = response
+
+
+def edit_colorization_method_command():
+    config.COLORIZATION_METHOD = Colorization(tk_vars.colorization_method.get())
 
 
 def edit_curvature_coefficient_command():
@@ -44,28 +55,33 @@ def edit_display_step_command():
         config.DISPLAY_STEP = response
 
 
-def edit_colorization_method_command():
-    config.COLORIZATION_METHOD = Colorization(tk_vars.colorization_method.get())
-
-
 def edit_gabor_sigmas_command():
     response = simpledialog.askstring(title='Gabor Sigmas', prompt='Gabor Sigmas:',
-                                      initialvalue=config.SIGMAS)
+                                      initialvalue=config.GABOR_SIGMAS)
     if isinstance(response, str):
-        config.SIGMAS = response.split(' ')
-        print(config.SIGMAS)
+        response = list(map(int, response.split(' ')))
+        if config.GABOR_SIGMAS != response:
+            globals.gabor_sigmas_changed = True
+        config.GABOR_SIGMAS = response
 
 
 def edit_gaussian_sigma_command():
-    response = simpledialog.askfloat(title='Gaussian Sigma', prompt='Gaussian Sigma:', initialvalue=config.SIGMA)
+    response = simpledialog.askfloat(title='Gaussian Sigma', prompt='Gaussian Sigma:',
+                                     initialvalue=config.GAUSSIAN_SIGMA)
     if isinstance(response, float):
-        config.SIGMA = response
+        config.GAUSSIAN_SIGMA = response
+
+
+def edit_leak_proofing_command():
+    config.LEAK_PROOFING = tk_vars.leak_proofing.get()
 
 
 def edit_orientations_command():
     response = simpledialog.askinteger(title='Orientations', prompt='Orientations:', initialvalue=config.ORIENTATIONS,
                                        minvalue=1)
     if isinstance(response, int):
+        if config.ORIENTATIONS != response:
+            globals.orientations_changed = True
         config.ORIENTATIONS = response
 
 
@@ -74,6 +90,13 @@ def edit_max_iterations_command():
                                        initialvalue=config.MAX_ITERATIONS, minvalue=1)
     if isinstance(response, int):
         config.MAX_ITERATIONS = response
+
+
+def edit_phi_threshold_command():
+    response = simpledialog.askfloat(title='Phi Threshold', prompt='Phi Threshold:',
+                                     initialvalue=config.PHI_THRESHOLD)
+    if isinstance(response, float):
+        config.PHI_THRESHOLD = response
 
 
 def edit_relaxation_factor_command():
@@ -94,10 +117,6 @@ def edit_region_command():
     config.REGION = Region(tk_vars.region.get())
 
 
-def edit_leak_proofing_command():
-    config.LEAK_PROOFING = tk_vars.leak_proofing.get()
-
-
 def edit_time_step_command():
     response = simpledialog.askfloat(title='Time Step (dt)', prompt='Time Step (dt):', initialvalue=config.DT)
     if isinstance(response, float):
@@ -116,6 +135,7 @@ def file_close_window_key_command(event):
 
 
 def file_open_image_command():
+    globals.reset_globals()
     globals.filename = filedialog.askopenfilename(initialdir=globals.search_dir, title='Open Image',
                                                   filetypes=FILE_TYPES)
     if globals.filename:
@@ -131,7 +151,7 @@ def file_open_image_key_command(event):
 def option_perform_colorization_command():
     globals.prev_output_img = deepcopy(globals.curr_output_img)
 
-    color = np.asarray(globals.curr_scribbled_img)[config.START_PIXEL[1], config.START_PIXEL[0]]
+    color = np.asarray(globals.curr_scribbled_img)[config.START_PIXEL[::-1]]
 
     colorization_method = Colorization(tk_vars.colorization_method.get())
 
@@ -175,3 +195,25 @@ def option_start_segmentation_command():
 
 def option_stop_segmentation_command():
     config.CONTINUE_LSM = False
+
+
+def view_distance_map_command():
+    check_distance_map()
+    visualizer.visualize_distance_map(255 - utils.normalize_and_scale(globals.distance_map), cmap='gray')
+
+
+def view_halting_filter_intensity_command():
+    raw_img_arr = deepcopy(np.asarray(globals.raw_img))
+    hI = halting_filter_intensity(raw_img_arr)
+    visualizer.visualize_halting_filter_intensity(hI)
+
+
+def view_halting_filter_pattern_command():
+    raw_img_arr = deepcopy(np.asarray(globals.raw_img))
+    hP = halting_filter_pattern(raw_img_arr)
+    visualizer.visualize_halting_filter_pattern(hP)
+
+
+def view_image_feature_vectors_command():
+    check_image_feature_vectors()
+    visualizer.visualize_image_feature_vectors(globals.img_fvs, config.CLUSTERS)

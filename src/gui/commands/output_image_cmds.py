@@ -39,7 +39,7 @@ def file_save_image_key_command(event):
 
 def edit_clear_all_command():
     globals.prev_output_img = deepcopy(globals.curr_output_img)
-    globals.curr_output_img = deepcopy(globals.raw_img)
+    globals.curr_output_img = deepcopy(globals.raw_img).convert('RGB')
     update_output_image()
 
 

@@ -81,7 +81,10 @@ def view_using_matplotlib_command():
 # ----------------------------------------
 def brush_stroke_command(event):
     if str(event.type) == EVENT_LBUTTONDOWN:
-        config.START_PIXEL = (event.x, event.y)
+        if PixelType(tk_vars.pixel_type.get()) == PixelType.start_pixel:
+            config.START_PIXEL = (event.x, event.y)
+        elif PixelType(tk_vars.pixel_type.get()) == PixelType.region_pixel:
+            config.REGION_PIXEL = (event.x, event.y)
         # globals.reset_globals()
         globals.drawing = True
         globals.prev_scribbled_img = deepcopy(globals.curr_scribbled_img)

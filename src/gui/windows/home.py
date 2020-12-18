@@ -63,6 +63,14 @@ class HomeWindow:
         pattern_params.add_command(label='Gabor Sigmas', command=edit_gabor_sigmas_command)
         pattern_params.add_command(label='Orientations', command=edit_orientations_command)
         pattern_params.add_command(label='Window Size', command=edit_window_size_command)
+        inverse_filter = tk.Menu(intensity_params, tearoff=0)
+        tk_vars.inverse_filter = tk.BooleanVar(self.master)
+        inverse_filter.add_radiobutton(label='True', variable=tk_vars.inverse_filter,
+                                       value=True, command=edit_inverse_filter_command)
+        inverse_filter.add_radiobutton(label='False', variable=tk_vars.inverse_filter,
+                                       value=False, command=edit_inverse_filter_command)
+        tk_vars.inverse_filter.set(config.INVERSE_FILTER)
+        pattern_params.add_cascade(label='Inverse Filter', menu=inverse_filter)
 
         lsm_params = tk.Menu(edit, tearoff=0)
         lsm_params.add_command(label='Break-off threshold', command=edit_break_off_threshold_command)
@@ -93,8 +101,8 @@ class HomeWindow:
         view.add_command(label='Image Feature Vectors', command=view_image_feature_vectors_command)
         view.add_command(label='Distance Map', command=view_distance_map_command)
         view.add_command(label='Halting Filter Pattern', command=view_halting_filter_pattern_command)
-        view.add_separator()
-        view.add_command(label='LSM Params')
+        # view.add_separator()
+        # view.add_command(label='LSM Params')
         view.add_separator()
         view.add_command(label='Clear Screen')
 

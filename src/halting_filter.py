@@ -29,11 +29,17 @@ def halting_filter_pattern(img):
 
     # hP = 1 / (1 + np.abs(globals.distance_map))
 
+    if not config.INVERSE_FILTER:
+        config.REGION_PIXEL = config.START_PIXEL
+
     clustered_img_fvs = utils.perform_clustering(globals.img_fvs, config.CLUSTERS)
-    hP = clustered_img_fvs[:, :, 0] == clustered_img_fvs[config.START_PIXEL[::-1]][0]
-    hP = hP & (clustered_img_fvs[:, :, 1] == clustered_img_fvs[config.START_PIXEL[::-1]][1])
-    hP = hP & (clustered_img_fvs[:, :, 2] == clustered_img_fvs[config.START_PIXEL[::-1]][2])
+    hP = clustered_img_fvs[:, :, 0] == clustered_img_fvs[config.REGION_PIXEL[::-1]][0]
+    hP = hP & (clustered_img_fvs[:, :, 1] == clustered_img_fvs[config.REGION_PIXEL[::-1]][1])
+    hP = hP & (clustered_img_fvs[:, :, 2] == clustered_img_fvs[config.REGION_PIXEL[::-1]][2])
     hP = np.asarray(hP, dtype=np.int)
+
+    if config.INVERSE_FILTER:
+        hP = 1 - hP
 
     return hP
 

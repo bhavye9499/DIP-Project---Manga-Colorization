@@ -55,12 +55,17 @@ FORMAT_JPEG = 'jpeg'
 FORMAT_PNG = 'png'
 
 
-class Region(enum.Enum):
-    intensity = 1
-    pattern = 2
-
-
 class Colorization(enum.Enum):
     color_replacement = 1
     pattern_to_shading = 2
     stroke_preserving = 3
+
+
+class PixelType(enum.Enum):
+    start_pixel = 1
+    region_pixel = 2
+
+
+class Region(enum.Enum):
+    intensity = 1
+    pattern = 2

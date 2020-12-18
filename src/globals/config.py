@@ -11,8 +11,10 @@ GAUSSIAN_SIGMA = 0.01
 
 # config for getting halting filter for pattern-continuous region
 CLUSTERS = 4
-ORIENTATIONS = 6
 GABOR_SIGMAS = (1, 3)
+INVERSE_FILTER = False
+REGION_PIXEL = None
+ORIENTATIONS = 6
 WINDOW_SIZE = 7
 
 # config for level set method

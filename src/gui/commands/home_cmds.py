@@ -79,6 +79,10 @@ def edit_gaussian_sigma_command():
         config.GAUSSIAN_SIGMA = response
 
 
+def edit_inverse_filter_command():
+    config.INVERSE_FILTER = tk_vars.inverse_filter.get()
+
+
 def edit_leak_proofing_command():
     config.LEAK_PROOFING = tk_vars.leak_proofing.get()
 

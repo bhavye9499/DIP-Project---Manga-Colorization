@@ -91,11 +91,22 @@ class InputImageWindow:
         view = tk.Menu(self.menubar, tearoff=0)
         view.add_command(label="Using matplotlib", command=view_using_matplotlib_command)
 
+        mode = tk.Menu(self.menubar, tearoff=0)
+        pixel_type = tk.Menu(mode, tearoff=0)
+        tk_vars.pixel_type = tk.IntVar(self.master)
+        pixel_type.add_radiobutton(label='Start Pixel', variable=tk_vars.pixel_type,
+                                   value=PixelType.start_pixel.value)
+        pixel_type.add_radiobutton(label='Region Pixel', variable=tk_vars.pixel_type,
+                                   value=PixelType.region_pixel.value)
+        tk_vars.pixel_type.set(PixelType.start_pixel.value)
+        mode.add_cascade(label='Pixel Type', menu=pixel_type)
+
         help = tk.Menu(self.menubar, tearoff=0)
 
         self.menubar.add_cascade(label="File", menu=file)
         self.menubar.add_cascade(label="Edit", menu=edit)
         self.menubar.add_cascade(label="View", menu=view)
+        self.menubar.add_cascade(label="Mode", menu=mode)
         self.menubar.add_cascade(label="Help", menu=help)
 
         self.master.config(menu=self.menubar)

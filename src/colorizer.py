@@ -38,8 +38,8 @@ def pattern_to_shading(color):
 
     # Creating mask for colorization
     mask = np.zeros_like(globals.phi)
-    mask[globals.phi == 1] = 100
-    mask[globals.phi <= 0] = 1
+    mask[globals.phi > config.PHI_THRESHOLD] = np.inf
+    mask[globals.phi <= config.PHI_THRESHOLD] = 1
 
     # Calculate new YUV channels
     y_new[mask == 1] = (y_user * s)[mask == 1]
@@ -51,7 +51,7 @@ def pattern_to_shading(color):
     globals.curr_output_img = Image.fromarray(output_image)
 
 
-def stroke_preserving(color, gauss_size=(7, 7), alpha=0.8):
+def stroke_preserving(color, gauss_size=(7, 7)):
     """
     Perform stroke preserving colorization of the masked region
     with the given YUV color and return the image in RGB format.
@@ -74,13 +74,13 @@ def stroke_preserving(color, gauss_size=(7, 7), alpha=0.8):
 
     # Creating mask for colorization
     mask = np.zeros_like(globals.phi)
-    mask[globals.phi == 1] = 100
-    mask[globals.phi <= 0] = 1
+    mask[globals.phi > config.PHI_THRESHOLD] = np.inf
+    mask[globals.phi <= config.PHI_THRESHOLD] = 1
 
     # Calculate new YUV channels
-    y_new[(mask == 1) & (kernel > alpha)] = (y_user * kernel)[(mask == 1) & (kernel > alpha)]
-    u_new[(mask == 1) & (kernel > alpha)] = u_user
-    v_new[(mask == 1) & (kernel > alpha)] = v_user
+    y_new[(mask == 1) & (kernel > config.ALPHA)] = (y_user * kernel)[(mask == 1) & (kernel > config.ALPHA)]
+    u_new[(mask == 1) & (kernel > config.ALPHA)] = u_user
+    v_new[(mask == 1) & (kernel > config.ALPHA)] = v_user
 
     new_image = cv2.merge((y_new, u_new, v_new))
     output_img = cv2.cvtColor(new_image, cv2.COLOR_YUV2RGB)

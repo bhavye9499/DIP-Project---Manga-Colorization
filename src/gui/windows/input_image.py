@@ -88,10 +88,14 @@ class InputImageWindow:
         edit.add_command(label="Undo         Ctrl+Z", command=edit_undo_command)
         edit.add_command(label="Clear All    Ctrl+X", command=edit_clear_all_command)
 
+        view = tk.Menu(self.menubar, tearoff=0)
+        view.add_command(label="Using matplotlib", command=view_using_matplotlib_command)
+
         help = tk.Menu(self.menubar, tearoff=0)
 
         self.menubar.add_cascade(label="File", menu=file)
         self.menubar.add_cascade(label="Edit", menu=edit)
+        self.menubar.add_cascade(label="View", menu=view)
         self.menubar.add_cascade(label="Help", menu=help)
 
         self.master.config(menu=self.menubar)

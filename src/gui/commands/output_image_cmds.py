@@ -1,4 +1,6 @@
+import numpy as np
 from copy import deepcopy
+from matplotlib import pyplot as plt
 from os import path
 from PIL import ImageTk
 from tkinter import filedialog
@@ -19,6 +21,7 @@ def file_save_image_command():
     if save_as_filename:
         globals.save_dir = path.dirname(save_as_filename)
         filename, file_extension = path.splitext(save_as_filename)
+        file_extension = file_extension.lower()
 
         if file_extension == '':
             file_extension = FORMAT_PNG
@@ -56,6 +59,12 @@ def edit_undo_command():
 
 def edit_undo_key_command(event):
     edit_undo_command()
+
+
+def view_using_matplotlib_command():
+    image = np.asarray(globals.curr_output_img)
+    plt.imshow(image)
+    plt.show()
 
 
 def update_output_image():

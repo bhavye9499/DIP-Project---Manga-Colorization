@@ -44,6 +44,7 @@ class HomeWindow:
         tk_vars.colorization_method.set(config.COLORIZATION_METHOD.value)
 
         colorization_params = tk.Menu(edit, tearoff=0)
+        colorization_params.add_command(label='Alpha', command=edit_alpha_command)
         colorization_params.add_command(label='Phi Threshold', command=edit_phi_threshold_command)
 
         intensity_params = tk.Menu(edit, tearoff=0)

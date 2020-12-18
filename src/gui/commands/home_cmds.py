@@ -17,6 +17,13 @@ from src.gui.commands.output_image_cmds import update_output_image
 from src.utils import utils, visualizer
 
 
+def edit_alpha_command():
+    response = simpledialog.askfloat(title='Stroke Preserving Alpha', prompt='Stroke Preserving Alpha:',
+                                     initialvalue=config.ALPHA)
+    if isinstance(response, float):
+        config.ALPHA = response
+
+
 def edit_ballooning_force_command():
     response = simpledialog.askfloat(title='Ballooning Force', prompt='Ballooning Force:', initialvalue=config.FA)
     if isinstance(response, float):

@@ -1,3 +1,4 @@
+import numpy as np
 import tkinter as tk
 
 from src.globals import globals
@@ -6,6 +7,8 @@ from src.gui.windows.input_image import InputImageWindow
 from src.gui.windows.output_image import OutputImageWindow
 
 if __name__ == '__main__':
+    np.seterr(divide='ignore', invalid='ignore')
+
     root = tk.Tk()
 
     globals.home_window = HomeWindow(root)

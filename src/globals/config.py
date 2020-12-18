@@ -1,6 +1,7 @@
 from src.globals.constants import *
 
-# general config
+# colorization
+ALPHA = 0.8
 BRUSH_SIZE = 3
 COLORIZATION_METHOD = Colorization.color_replacement
 PHI_THRESHOLD = 0.0
@@ -21,9 +22,9 @@ DT = 0.1
 EPSILON = 5e-3
 FA = 1
 LEAK_PROOFING = True
-LSM_THRESHOLD = 10
+LSM_THRESHOLD = 1
 MAX_ITERATIONS = 10000
-NR = 5
+NR = 1
 REGION = Region.intensity
 RELAX_FACTOR = 0.4
 START_PIXEL = None

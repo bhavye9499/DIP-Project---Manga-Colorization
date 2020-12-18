@@ -25,7 +25,7 @@ def pattern_to_shading(color):
     color: (r, g, b) color to shade the masked region
     """
     image = np.asarray(globals.curr_output_img)
-    yuv_image = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
+    yuv_image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
     y_user, u_user, v_user = rgb2yuv(color)
 
     # Extract YUV channels
@@ -60,14 +60,15 @@ def stroke_preserving(color, gauss_size=(7, 7), alpha=0.8):
     color: (y, u, v) color to colorize the masked region
     """
     image = np.asarray(globals.curr_output_img)
-    yuv_image = cv2.cvtColor(cv2.cvtColor(image, cv2.COLOR_GRAY2BGR), cv2.COLOR_BGR2YUV)
+    gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    yuv_image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
     y_user, u_user, v_user = rgb2yuv(color)
 
     # Extract YUV channels
     y, u, v = cv2.split(yuv_image)
     y_new, u_new, v_new = y.copy(), u.copy(), v.copy()
 
-    gaussian = cv2.GaussianBlur(image, gauss_size, 0)
+    gaussian = cv2.GaussianBlur(gray_image, gauss_size, 0)
     h1 = 1 / (1 + np.abs(cv2.Laplacian(gaussian, -1)))
     kernel = map_mat(np.square(np.abs(1 - h1)))
 

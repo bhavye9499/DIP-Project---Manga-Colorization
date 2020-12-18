@@ -111,6 +111,8 @@ def rgb2yuv(rgb_color):
     :param rgb_color: (r, g, b) color
     :return: (y, u, v) color
     """
-    rgb_color = rgb_color.astype(np.float)
-    yuv_color = cv2.cvtColor(np.array([[rgb_color]]), cv2.COLOR_BGR2YUV)
-    return yuv_color[0][0]
+    R, G, B = rgb_color
+    Y = 0.257 * R + 0.504 * G + 0.098 * B + 16
+    U = -0.148 * R - 0.291 * G + 0.439 * B + 128
+    V = 0.439 * R - 0.368 * G - 0.071 * B + 128
+    return Y, U, V

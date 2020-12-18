@@ -1,4 +1,5 @@
 from os import path, pardir
+from pathlib import Path
 from tkinter import messagebox
 
 # for GUI windows
@@ -8,8 +9,8 @@ output_image_window = None
 
 # for opening/saving images
 filename = None
-save_dir = path.join(path.dirname(path.abspath(__file__)), pardir, pardir, 'media', 'output')  # TODO change to '/'
-search_dir = path.join(path.dirname(path.abspath(__file__)), pardir, pardir, 'media', 'input')  # TODO change to '/'
+save_dir = str(Path.home())
+search_dir = str(Path.home())
 
 # for brush-stroking
 drawing = False

@@ -80,7 +80,7 @@ def view_using_matplotlib_command():
 # Image commands
 # ----------------------------------------
 def brush_stroke_command(event):
-    if str(event.type) == EVENT_LBUTTONDOWN:
+    if event.type.name == EVENT_LBUTTONDOWN:
         if PixelType(tk_vars.pixel_type.get()) == PixelType.start_pixel:
             config.START_PIXEL = (event.x, event.y)
         elif PixelType(tk_vars.pixel_type.get()) == PixelType.region_pixel:
@@ -90,12 +90,12 @@ def brush_stroke_command(event):
         globals.prev_scribbled_img = deepcopy(globals.curr_scribbled_img)
         globals.scribbled_pixels = np.array([[event.x, event.y]])
 
-    elif str(event.type) == EVENT_MOUSEMOVE:
+    elif event.type.name == EVENT_MOUSEMOVE:
         if globals.drawing:
             globals.scribbled_pixels = np.append(globals.scribbled_pixels, [[event.x, event.y]], axis=0)
             draw_circle(event)
 
-    elif str(event.type) == EVENT_LBUTTONUP:
+    elif event.type.name == EVENT_LBUTTONUP:
         globals.drawing = False
         np.append(globals.scribbled_pixels, [[event.x, event.y]], axis=0)
         draw_circle(event)
